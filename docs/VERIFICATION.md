@@ -14,3 +14,7 @@ Reviewed on 31 October 2026.
 | Source archive review | Private runtime configuration, backups, unrelated internal records, and development Git history excluded |
 
 The browser checks read deployed information without creating production accounts or clinic records. Real-account sign-in was not repeated for this documentation delivery. Online appointment submission, payment processing, and other unfinished workflows are outside the implemented release. These checks are not an independent security assessment.
+
+## Workflow diagram update — 31 October 2026
+
+The documentation now includes 12 editable Mermaid sources and 12 corresponding SVG diagrams. The HTML/PDF handbook embeds the diagrams, with current behavior and planned workflows labeled separately. Diagram checks cover image loading, phone-contained scrolling, 44px contents navigation, A4 print bounds and text sizing, and database relationship-label contrast. Screens were checked at 390px first, then 320px, 768px, and 1440px. Application source and runtime configuration remain unchanged from the previously tested delivery; this update changes documentation and diagrams only.

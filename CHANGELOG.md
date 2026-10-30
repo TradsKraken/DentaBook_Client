@@ -1,5 +1,9 @@
 # Delivery notes
 
+## Workflow and system diagrams — 31 October 2026
+
+Added 12 diagrams covering the system architecture, patient/clinic/admin journeys, session checks, account/clinic data, appointment data foundations, planned booking, cost estimates, release operations, and the remaining roadmap. Each diagram includes a vector SVG and editable Mermaid source. Current behavior and planned features are labeled separately. The diagram guide and printable handbook now include these visuals.
+
 ## Initial client handoff — 31 October 2026
 
 This snapshot includes:

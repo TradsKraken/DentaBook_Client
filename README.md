@@ -12,6 +12,7 @@ Open the [printable client handbook](CLIENT_GUIDE.html) in a browser to read the
 
 | What you need | Where to read |
 | --- | --- |
+| Workflows, architecture, and database diagrams | [Diagram guide](docs/11_DIAGRAMS_AND_WORKFLOWS.md) |
 | A plain-language introduction | [Project guide](docs/01_PROJECT_GUIDE.md) |
 | Instructions for patients, clinics, and administrators | [User guide](docs/02_USER_GUIDE.md) |
 | What works now and what comes next | [Status and development plan](docs/06_STATUS_AND_DEVELOPMENT_PLAN.md) |
