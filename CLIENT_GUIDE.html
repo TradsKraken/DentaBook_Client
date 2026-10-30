@@ -1,0 +1,451 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DentaBook — Client Handbook</title><style>
+:root{--blue:#126f9c;--ink:#17374b;--line:#d9e7ef}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:#eaf2f7;font:16px/1.65 Arial,sans-serif}main{max-width:1040px;margin:auto;background:#fff;padding:44px}a{color:var(--blue);text-underline-offset:3px}h1,h2,h3,h4{line-height:1.2;break-after:avoid}h1{font-size:44px;margin:24px 0}h2{font-size:30px;color:var(--blue);padding-bottom:12px;border-bottom:2px solid var(--line)}h3{font-size:21px;margin-top:28px}p,li,td{overflow-wrap:anywhere}li{margin:7px 0}article{margin-top:55px}.cover{border-top:8px solid var(--blue);padding:38px 0}.logo{width:230px;max-width:70%;height:auto}.eyebrow{font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}.subtitle{font-size:22px}.note{background:#eff7fb;border-left:4px solid var(--blue);padding:15px 20px}.toc{columns:2;column-gap:32px;padding-left:24px}.toc li{break-inside:avoid}.toc a{display:block;min-height:44px;min-width:44px;padding:8px 0}table{width:100%;border-collapse:collapse;font-size:14px;margin:20px 0}th,td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}th{background:#edf6fb;color:#174968}thead{display:table-header-group}tr{break-inside:avoid}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f8;border:1px solid var(--line);padding:14px;font-size:12px}code{font-family:Consolas,monospace;font-size:.9em}.architecture{margin:24px 0;background:#eff7fb;padding:18px;border:1px solid var(--line)}.architecture>div{display:flex;gap:15px;margin:10px 0}.architecture b,.architecture span{flex:1;padding:10px;background:#fff;border:1px solid var(--line)}figcaption{font-size:13px;color:#526e80}footer{font-size:12px;color:#526e80;border-top:1px solid var(--line);padding-top:18px;margin-top:45px}@media(min-width:768px){main{padding:64px}}@media(max-width:600px){main{padding:22px}h1{font-size:34px}.toc{columns:1}table{font-size:12px}th,td{padding:7px}}@media print{body{background:#fff;font-size:10.5pt;line-height:1.5}main{max-width:none;padding:0}h1{font-size:34pt}h2{font-size:23pt}h3{font-size:15pt}article{break-before:page;margin-top:0}table{font-size:9pt}th,td{padding:7px}pre{font-size:8.5pt}.cover{min-height:150mm;padding-top:30mm}.toc{columns:1}nav{break-before:page}a{color:#126f9c;text-decoration:none}.architecture{break-inside:avoid}.note{break-inside:avoid}}
+</style></head><body><main><header class="cover"><img class="logo" src="client/public/branding/dentabook-logo.jpg" alt="DentaBook"><p class="eyebrow">Client documentation · 31 October 2026</p><h1>DentaBook<br>Client Handbook</h1><p class="subtitle">Understanding, operating, and continuing your website.</p><p>Book your smile, know your cost.</p><div class="note"><strong>Current release:</strong> clinic discovery and account foundation. This handbook explains the delivered features, operating procedures, and remaining development phases.</div></header><nav aria-label="Handbook contents"><h2>Contents</h2><ol class="toc"><li><a href="#section-docs-01_project_guide">Project guide</a></li><li><a href="#section-docs-02_user_guide">User guide</a></li><li><a href="#section-docs-03_technical_overview">Technical overview</a></li><li><a href="#section-docs-04_setup_and_deployment">Setup and deployment</a></li><li><a href="#section-docs-05_operations_manual">Operations manual</a></li><li><a href="#section-docs-06_status_and_development_plan">Status and development plan</a></li><li><a href="#section-docs-07_testing_and_acceptance">Testing and acceptance</a></li><li><a href="#section-docs-08_api_reference">API reference</a></li><li><a href="#section-docs-09_data_and_security">Data and security</a></li><li><a href="#section-docs-10_handover_checklist">Handover checklist</a></li><li><a href="#section-docs-dependencies">Dependency versions</a></li><li><a href="#section-docs-asset_notices">Branding, photography, and font notices</a></li><li><a href="#section-changelog">Delivery notes</a></li></ol></nav><article id="section-docs-01_project_guide"><h2>Project guide</h2>
+<h3>Purpose</h3>
+<p>DentaBook brings clinic information, treatment information, and account access into one website. A visitor can compare available clinic information and understand published treatment prices before contacting a clinic.</p>
+<p>The longer-term product includes appointment requests, clinic review of those requests, deposits, appointment tracking, and completed-visit feedback. Those later steps are listed separately in the development plan because they are not available in the current release.</p>
+<h3>Who uses the website</h3>
+<table><thead><tr><th>Person</th><th>What the current release allows</th></tr></thead><tbody>
+<tr><td>Visitor</td><td>Browse clinics and treatments, view public profiles, search, and estimate costs without an account</td></tr>
+<tr><td>Patient</td><td>Register, sign in, view account details, and view appointments already linked to that account</td></tr>
+<tr><td>Clinic representative</td><td>Register a clinic, check review status, read review notes, and access the approved-clinic workspace</td></tr>
+<tr><td>Platform administrator</td><td>Review clinic submissions and approve or reject pending registrations</td></tr>
+</tbody></table>
+<p>Each account is assigned a role. Registering as a patient cannot create a clinic or administrator account. Clinics appear publicly only after administrator approval. A clinic representative cannot enter the administrator workspace.</p>
+<h3>What a visitor sees</h3>
+<p>The homepage introduces the service and provides access to clinic discovery, treatment information, the calculator, and patient account pages. Clinic listings come from approved records saved in the database. The site shows a clear empty message when no clinics have been published, and a separate error message if information cannot be loaded.</p>
+<p>The calculator uses a selected clinic&#x27;s saved service prices. It does not make a reservation, accept money, or guarantee a final treatment bill. The clinic confirms the treatment and final cost directly with the patient.</p>
+<h3>Current delivery boundaries</h3>
+<p>This release supports discovery and account administration. A new clinic can register and be approved, but editing clinic descriptions, dentist records, prices, and schedules through the clinic dashboard is a later increment. Until that increment is delivered, an authorized operator must arrange data updates through a controlled maintenance process.</p>
+<p>Patient appointment pages can display existing account-linked records. The website does not yet create new appointment requests or available time slots. A signed-in patient sees a clear notice where online booking is unavailable.</p>
+<h3>Design approach</h3>
+<p>The interface uses DentaBook&#x27;s supplied logo and a blue-and-white theme. Layouts begin with narrow phone screens, with additional arrangements for tablets and desktop computers. Forms stack vertically on phones. Form text is at least 16px, and buttons and navigation actions are designed for touch.</p>
+<p>Operational information is presented as loading, empty, error, or unavailable states as appropriate. The application does not invent clinics, ratings, prices, or successful appointment confirmations.</p>
+<h3>What this handoff contains</h3>
+<p>The source code, database initialization and migrations, configuration templates, automated tests, asset notices, and documentation are included. Live data, passwords, account recovery secrets, certificates, and private hosting credentials are transferred separately through the operator&#x27;s agreed access process.</p>
+<p>Use the <a href="#section-docs-02_user_guide">user guide</a> for step-by-step tasks and the <a href="#section-docs-06_status_and_development_plan">development plan</a> to review the remaining scope.</p></article><article id="section-docs-02_user_guide"><h2>User guide</h2>
+<h3>Browsing without an account</h3>
+<ol>
+<li>Open https://dentabook.forgroup.space.</li>
+<li>Choose <strong>Find a clinic</strong> to open the directory.</li>
+<li>Search by the clinic, service, dentist, or location information available in the saved records.</li>
+<li>Open a clinic to view its public contact details, active services, and active dentist information.</li>
+<li>Use <strong>Cost calculator</strong> to select a clinic and its published treatments.</li>
+<li>Contact the clinic to confirm suitability, availability, and the final price.</li>
+</ol>
+<p>If no clinics are listed, approved records have not been published yet. If an error message appears, use the retry action. An empty directory is not the same as a connection error.</p>
+<h3>Creating a patient account</h3>
+<ol>
+<li>Open <strong>Patient registration</strong> at <code>/patient/register</code>.</li>
+<li>Enter your name, email address, phone number, and password.</li>
+<li>Confirm the same password and submit the form.</li>
+<li>After the account-ready message, continue to patient sign-in.</li>
+<li>Sign in with the email address and password you registered.</li>
+</ol>
+<p>Passwords must contain at least 12 characters and no more than 72 UTF-8 bytes. Some symbols use more than one byte; an ordinary longer passphrase can meet the minimum without using complex symbols.</p>
+<p>Patient registration does not grant clinic or administrator access. Password recovery and email verification are not yet implemented. If you forget your password, contact the designated website operator; there is no self-service reset link in this release.</p>
+<h3>Using patient pages</h3>
+<p><strong>My account</strong> shows the signed-in patient&#x27;s saved information. <strong>My appointments</strong> shows appointments already associated with that account, or an empty message when none exist. Other patients&#x27; information is not available through these pages.</p>
+<p>Opening a personal page while signed out leads to patient sign-in. After a successful sign-in, the website returns to the requested patient page. Online booking submission remains unavailable; signing in does not create an appointment.</p>
+<h3>Registering a clinic</h3>
+<ol>
+<li>Open <code>/clinic/register</code> on the main website.</li>
+<li>Enter the authorized account holder&#x27;s name, account email, and password.</li>
+<li>Enter the clinic&#x27;s name, address, public phone, public email, and registration or license reference.</li>
+<li>Confirm that you are authorized to register and manage the clinic.</li>
+<li>Submit the registration.</li>
+<li>Sign in at <code>/clinic/sign-in</code> to check the result.</li>
+</ol>
+<p>The account email is used for sign-in. The public clinic email is contact information intended for the clinic&#x27;s public listing. Submitting a registration does not automatically publish the clinic or approve its credentials.</p>
+<h3>Clinic review results</h3>
+<table><thead><tr><th>Status</th><th>Meaning and next step</th></tr></thead><tbody>
+<tr><td>Pending review</td><td>An administrator has not yet approved or rejected the submission</td></tr>
+<tr><td>Approved</td><td>The clinic can appear in the public directory and the owner can access its workspace</td></tr>
+<tr><td>Rejected</td><td>The clinic remains unpublished; read the review notes and contact the operator about correction</td></tr>
+<tr><td>Suspended</td><td>The clinic workspace is unavailable while the suspension remains in place</td></tr>
+</tbody></table>
+<p>The approved-clinic workspace displays saved clinic information and available database counts. Editing services, dentist information, schedules, and appointments is planned work. The current administrator interface approves or rejects pending clinics; it does not provide a complete suspension-management workflow.</p>
+<h3>Reviewing clinics as an administrator</h3>
+<ol>
+<li>Open https://dentabook-admin.forgroup.space/admin/sign-in.</li>
+<li>Sign in with an administrator account provided through the operator setup process.</li>
+<li>Open the list of pending clinic registrations.</li>
+<li>Review the submitted details and reference information using the organization&#x27;s review procedure.</li>
+<li>Choose approve or reject and complete the confirmation step.</li>
+<li>Provide a reason when rejecting a registration.</li>
+<li>Confirm that the updated result appears in the appropriate list.</li>
+</ol>
+<p>A review records the decision, reviewer, time, and notes. Approval is an application publishing decision; the software does not independently verify a professional license. There is no public administrator registration or default administrator password.</p>
+<h3>Signing out and switching accounts</h3>
+<p>Choose <strong>Sign out</strong> before using a shared device or changing between patient and clinic accounts. Those two roles share the main website&#x27;s browser session. Administrator access has its own hostname and session. Administrator sessions last one hour; patient and clinic sessions last eight hours unless revoked earlier.</p>
+<p>If sign-in expires, sign in again. Changing a password or account role through an authorized maintenance process revokes existing sessions.</p></article><article id="section-docs-03_technical_overview"><h2>Technical overview</h2>
+<h3>How the website is organized</h3>
+<p>DentaBook has three application layers: the browser interface, the server API, and the database. Production runs the API in two processes so administrator access is separated from the public and clinic site.</p>
+<figure class="architecture"><div><b>Patient / clinic website</b><span>Public API</span></div><div><b>Administrator website</b><span>Administrator API</span></div><p>Both authorized API processes use the same PostgreSQL database.</p><figcaption>Browser pages → server permission checks → saved database records</figcaption></figure>
+<p>The browser presents forms and pages. The API validates submitted information and enforces account permissions. PostgreSQL stores the records. A browser cannot gain administrator access by changing a page link, form value, or request header.</p>
+<h3>Technologies used</h3>
+<table><thead><tr><th>Technology</th><th>Purpose</th></tr></thead><tbody>
+<tr><td>React 19</td><td>Builds the website&#x27;s reusable interface components</td></tr>
+<tr><td>React Router 7</td><td>Connects page addresses to the correct interface and handles navigation</td></tr>
+<tr><td>Vite 6</td><td>Runs the frontend development server and builds deployable website files</td></tr>
+<tr><td>Standard CSS</td><td>Provides the mobile-first layout, theme, controls, and transitions</td></tr>
+<tr><td>Lucide React</td><td>Supplies interface icons</td></tr>
+<tr><td>Node.js 22</td><td>Runs the server application and build tools</td></tr>
+<tr><td>Express 4</td><td>Organizes API requests and server middleware</td></tr>
+<tr><td>node-postgres (<code>pg</code>)</td><td>Connects the server to PostgreSQL using pooled connections</td></tr>
+<tr><td>PostgreSQL 16</td><td>Stores accounts, clinic information, sessions, and related records</td></tr>
+<tr><td>bcrypt 6</td><td>Hashes passwords before they are stored</td></tr>
+<tr><td>Nginx</td><td>Serves built website files and forwards API requests</td></tr>
+<tr><td>Docker and Docker Compose</td><td>Package the services and define how they run together</td></tr>
+<tr><td>Playwright</td><td>Checks browser behavior and responsive layouts</td></tr>
+<tr><td>PGlite</td><td>Runs isolated PostgreSQL-compatible integration tests</td></tr>
+</tbody></table>
+<p>Exact installed package versions are recorded in both lockfiles and summarized in <a href="#section-docs-dependencies">dependency versions</a>. Package ranges in <code>package.json</code> describe allowed versions; <code>npm ci</code> installs the lockfile versions.</p>
+<h3>Main source files</h3>
+<table><thead><tr><th>Location</th><th>Responsibility</th></tr></thead><tbody>
+<tr><td><code>client/src/App.jsx</code></td><td>Website routes and public/clinic/admin page layouts</td></tr>
+<tr><td><code>client/src/pages/</code></td><td>Public pages, registration, sign-in, and workspaces</td></tr>
+<tr><td><code>client/src/hooks/useAuth.jsx</code></td><td>Browser session loading and access-related navigation</td></tr>
+<tr><td><code>client/src/hooks/useClinics.jsx</code></td><td>Loading approved public clinic information</td></tr>
+<tr><td><code>client/src/api.js</code></td><td>Requests from the browser to the same website&#x27;s API</td></tr>
+<tr><td><code>client/src/index.css</code></td><td>Branding, responsive layout, forms, and touch controls</td></tr>
+<tr><td><code>server/routes/</code></td><td>Account, clinic directory, and workspace endpoints</td></tr>
+<tr><td><code>server/auth.js</code></td><td>Session validation, password-related access controls, and role checks</td></tr>
+<tr><td><code>server/portal.js</code></td><td>Restricts which roles and endpoints each API process accepts</td></tr>
+<tr><td><code>server/database/</code></td><td>Initial schema and ordered database migrations</td></tr>
+<tr><td><code>client/nginx-portals/</code></td><td>Production public/admin listeners and forwarding rules</td></tr>
+</tbody></table>
+<h3>How information moves through the system</h3>
+<p>When a visitor opens the clinic directory, the browser requests <code>/api/clinics</code>. The API reads approved clinics and their active public services and dentist information. It returns data for the interface to display. If the query fails, the page shows a loading error rather than an invented clinic listing.</p>
+<p>When a patient or clinic representative signs in, the server checks the password hash and required role. It creates a random session token, stores only its hash, and places the token in a protected browser cookie. Each private request is checked against the saved session. Authentication uses database-backed opaque sessions; it does not use JWT tokens.</p>
+<p>When an administrator reviews a registration, the administrator API checks the session and role before changing a pending clinic&#x27;s status. The change is saved with the reviewer and review information. Public directory queries only include approved clinics.</p>
+<h3>Implementation approach</h3>
+<p>The application is organized into incremental capabilities: public discovery, account registration and permissions, clinic review, production separation, and testing. Interfaces use actual API data and explicit states for incomplete operations. Database changes are applied through versioned migration files rather than relying on manual changes to every installation.</p>
+<p>The next increments extend clinic data management and scheduling before enabling appointment submission. The <a href="#section-docs-06_status_and_development_plan">development plan</a> explains this order and its acceptance criteria.</p></article><article id="section-docs-04_setup_and_deployment"><h2>Setup and deployment</h2>
+<p>This guide is for the person responsible for hosting. Routine users only need a browser and the website addresses in the user guide.</p>
+<h3>Requirements</h3>
+<p>Use a server with Docker Engine and Docker Compose 2.24.4 or newer. Production requires the public and administrator hostnames to point to a reverse proxy, a valid certificate for each hostname, and HTTPS. Node.js 22 is needed on a workstation only when running development tools outside Docker.</p>
+<p>Run a test installation on a separate machine from the live stack. The supplied container names are fixed; another copy on the same machine will conflict with the running containers unless the operator deliberately changes the configuration.</p>
+<h3>Local evaluation</h3>
+<ol>
+<li>Copy <code>.env.example</code> to <code>.env</code> in the project root.</li>
+<li>Replace the database password placeholder with a newly generated random password.</li>
+<li>Set <code>NODE_ENV=development</code> and <code>CLIENT_URL=http://localhost:3000</code>.</li>
+<li>Keep the production <code>COMPOSE_FILE</code> setting disabled for a combined local preview.</li>
+<li>Confirm that ports 3000, 5000, and the chosen database diagnostic port are unused.</li>
+<li>Run:</li>
+</ol>
+<pre><code>docker compose config --quiet
+docker compose up -d --build --wait
+docker compose ps
+curl --fail http://localhost:3000/api/health</code></pre>
+<p>Open <code>http://localhost:3000</code>. Local patient, clinic, and administrator routes share that origin, with server-enforced roles. Local HTTP is for controlled evaluation; production uses HTTPS.</p>
+<h3>Production configuration</h3>
+<p>On the intended production server, copy <code>.env.production.example</code> to <code>.env</code>. Preserve an existing production <code>.env</code> when updating a live installation. Supply a unique database password before first startup. On Linux, restrict the file with <code>chmod 600 .env</code>.</p>
+<table><thead><tr><th>Setting</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>COMPOSE_FILE</code></td><td>Selects the base file and production override together</td></tr>
+<tr><td><code>CLIENT_PORT=3003</code></td><td>Host port for the patient/clinic website</td></tr>
+<tr><td><code>ADMIN_PORT=3005</code></td><td>Host port for the administrator website</td></tr>
+<tr><td><code>CLIENT_URL</code></td><td>Exact public HTTPS browser origin, with no path</td></tr>
+<tr><td><code>ADMIN_URL</code></td><td>Exact administrator HTTPS origin, with no path</td></tr>
+<tr><td><code>DB_USER</code>, <code>DB_NAME</code>, <code>DB_PASSWORD</code></td><td>Database connection settings; preserve these for an existing volume</td></tr>
+<tr><td><code>NODE_ENV=production</code></td><td>Enables production operation and secure session cookies</td></tr>
+<tr><td><code>TRUST_PROXY</code></td><td>Optional explicit trusted proxy addresses; leave blank until correctly configured</td></tr>
+</tbody></table>
+<p>Run all commands from the project root so Compose loads the intended <code>.env</code>:</p>
+<pre><code>docker compose config --quiet
+docker compose build
+docker compose up -d --wait
+docker compose ps</code></pre>
+<p>The database initializes a new persistent volume on first startup. API startup applies pending migrations. An existing volume is reused on later deployments. Changing an environment password does not automatically change the password inside an existing database.</p>
+<p>Production contains four services: the website, the public/clinic API, the administrator API, and PostgreSQL. The APIs and database have no published host ports. The website exposes ports 3003 and 3005 for the upstream reverse proxy.</p>
+<h3>Nginx Proxy Manager</h3>
+<p>Create these two Proxy Hosts, substituting the production server&#x27;s LAN address:</p>
+<table><thead><tr><th>Domain</th><th>Forward scheme</th><th>Forward host</th><th>Forward port</th></tr></thead><tbody>
+<tr><td><code>dentabook.forgroup.space</code></td><td><code>http</code></td><td>Production server LAN address</td><td><code>3003</code></td></tr>
+<tr><td><code>dentabook-admin.forgroup.space</code></td><td><code>http</code></td><td>Production server LAN address</td><td><code>3005</code></td></tr>
+</tbody></table>
+<p>Install a valid certificate for each exact name and enable Force SSL. Forward the entire hostname; the application already handles <code>/api</code> forwarding. Do not create a separate clinic host. Clinic access uses <code>/clinic/sign-in</code> on the main website. Use Cloudflare Full (strict) encryption when the DNS records are proxied through Cloudflare.</p>
+<p>The administrator root redirects to <code>/admin/sign-in</code>. Redirects are relative so they preserve the browser&#x27;s HTTPS hostname or the published LAN port.</p>
+<h3>First administrator</h3>
+<p>An operator creates the first real administrator interactively:</p>
+<pre><code>docker compose exec api npm run create-admin</code></pre>
+<p>Enter the intended person&#x27;s name, email, and a private password. There are no default administrator credentials. Transfer access through the agreed private process, not through a source-code file or this documentation.</p>
+<h3>Verify the installation</h3>
+<pre><code>curl --fail https://dentabook.forgroup.space/api/health
+curl --fail https://dentabook-admin.forgroup.space/api/health
+curl --fail --location --head https://dentabook-admin.forgroup.space/
+curl --fail --head https://dentabook.forgroup.space/clinic/sign-in</code></pre>
+<p>Both health responses should report <code>healthy</code> and a connected database. Administrator pages must return 404 on the public host; patient and clinic pages must return 404 on the administrator host. Then run the <a href="#section-docs-07_testing_and_acceptance">acceptance checks</a>.</p>
+<p>If the domains change, update the origins in <code>.env</code>, rebuild the client, recreate the API services, and update DNS/certificates. Public and clinic links are configured during the website build.</p></article><article id="section-docs-05_operations_manual"><h2>Operations manual</h2>
+<h3>Routine checks</h3>
+<p>Use the correct project directory and production <code>.env</code>. Check <code>docker compose ps</code>, both HTTPS health endpoints, certificate renewal, available disk space, and the most recent verified backup. Agree an appropriate check schedule and responsible operator before relying on the system for daily operations.</p>
+<pre><code>docker compose ps
+docker compose logs --tail=100 api admin_api client db</code></pre>
+<p>Logs can contain operational or account-related information. Share only the relevant, redacted excerpt when requesting support.</p>
+<h3>Backing up the database</h3>
+<p>The persistent Docker volume keeps records when containers are replaced. It is not a separate backup. Create a private backup before every release or database maintenance operation, and on the schedule agreed with the project owner.</p>
+<p>From the project root on a Linux host:</p>
+<pre><code>mkdir -p .local/backups
+chmod 700 .local/backups
+umask 077
+docker compose exec -T db sh -c &#x27;pg_dump -U &quot;$POSTGRES_USER&quot; &quot;$POSTGRES_DB&quot;&#x27; &gt; &quot;.local/backups/dentabook-$(date +%Y%m%d-%H%M%S).sql&quot;</code></pre>
+<p>Keep a protected copy outside the production server. Test recovery periodically in an isolated environment. Store the configuration and access needed for recovery separately from the database backup. This release does not configure scheduled backups, backup encryption, or retention automatically.</p>
+<h3>Recovery procedure</h3>
+<ol>
+<li>Identify the last verified backup and the application version it belongs to.</li>
+<li>Prepare an isolated PostgreSQL 16 database with the required database role and extension permissions.</li>
+<li>Restore the SQL backup into a new, empty database using an authorized database operator&#x27;s connection. A command such as <code>psql --set ON_ERROR_STOP=1 --dbname &quot;$RESTORE_DATABASE_URL&quot; --file backup.sql</code> must target that recovery database, not the live one.</li>
+<li>Check account and clinic record counts, session behavior, directory data, and the relevant application workflows against the restored database.</li>
+<li>Agree the production recovery window and data cutover before reconnecting the live application.</li>
+<li>Repeat the health and acceptance checks after cutover.</li>
+</ol>
+<p>The backup format is plain SQL. Restoring it into an already initialized database may conflict with existing tables or records; prepare an empty recovery database and stop on errors. Do not attempt a production restore by trial and error.</p>
+<h3>Installing a new release</h3>
+<p>Confirm that the release has passed the agreed tests and read its release notes. Back up the database and retain the previous release and its configuration. For a clean client repository checkout, obtain the approved release using the agreed branch or tag, then run:</p>
+<pre><code>docker compose config --quiet
+docker compose build
+docker compose up -d --wait
+docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -t
+docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -s reload</code></pre>
+<p>Verify the two HTTPS health endpoints and the user journeys. Database migrations run at startup and may require a recovery plan beyond restarting an old image. The current project has no general automatic migration-down command.</p>
+<p>Never use <code>docker compose down -v</code> for a routine update: it deletes the named database volume. <code>docker compose down</code> stops the stack without deleting that named volume. Keep production configuration independent from local testing.</p>
+<h3>Common problems</h3>
+<table><thead><tr><th>Symptom</th><th>What to check</th></tr></thead><tbody>
+<tr><td>Proxy shows 502</td><td>Container status, production server address, correct upstream port, LAN reachability, and application logs</td></tr>
+<tr><td>Certificate or hostname error</td><td>Exact Proxy Host name, DNS record, matching certificate, and renewal status</td></tr>
+<tr><td>Sign-in form works but session does not persist</td><td>HTTPS, correct browser hostname, production origins, cookies, and API health</td></tr>
+<tr><td>Registration returns a verification error</td><td>The browser is using the configured origin and requests carry the required application header</td></tr>
+<tr><td>Clinic directory is empty</td><td>Whether clinics have been approved and active clinic service/dentist records exist</td></tr>
+<tr><td>Clinic cannot open its workspace</td><td>Signed-in account role, clinic ownership, and approval status</td></tr>
+<tr><td>Temporary too-many-attempts message</td><td>Respect the retry period; repeated requests may have reached the process&#x27;s limit</td></tr>
+<tr><td>An administrator link fails on the main site</td><td>Use the separate administrator hostname; public-host admin routes are intentionally blocked</td></tr>
+</tbody></table>
+<p>Self-service password resets, MFA, automated email delivery, and provider payments are not available in this release. Escalate those requests to the designated maintainer using the approved maintenance process.</p></article><article id="section-docs-06_status_and_development_plan"><h2>Status and development plan</h2>
+<p><strong>Snapshot: 31 October 2026.</strong> This document distinguishes delivered behavior from remaining scope. A database table or page address alone does not mean its complete workflow is available.</p>
+<h3>Delivered in this snapshot</h3>
+<table><thead><tr><th>Area</th><th>Available behavior</th></tr></thead><tbody>
+<tr><td>Public website</td><td>Homepage, treatment information, about page, and phone-first navigation</td></tr>
+<tr><td>Clinic discovery</td><td>Approved-clinic directory, search, public clinic details, active services, and active dentist information</td></tr>
+<tr><td>Cost estimates</td><td>Selected clinic&#x27;s published prices; no charge or booking is created</td></tr>
+<tr><td>Patient accounts</td><td>Registration, sign-in/out, account information, private-page protection</td></tr>
+<tr><td>Patient appointments</td><td>Account-scoped reading of existing linked records, including an empty state</td></tr>
+<tr><td>Clinic accounts</td><td>Registration, pending/rejected/suspended status information, review notes, and approved-clinic workspace</td></tr>
+<tr><td>Administrator review</td><td>Separate sign-in and pending-clinic approval/rejection with recorded reviewer and notes</td></tr>
+<tr><td>Access controls</td><td>Hashed passwords, database-backed sessions, role and ownership checks, origin checks, and separate administration</td></tr>
+<tr><td>Hosting</td><td>Docker services, persistent storage, HTTPS proxy configuration, and deployment instructions</td></tr>
+<tr><td>Verification</td><td>Automated backend and browser checks, including 320/390/768/1440px layouts</td></tr>
+</tbody></table>
+<h3>Current development position</h3>
+<p>The discovery and account foundation is delivered. The next proposed product increment is <strong>clinic content management</strong>. The remaining items below are planned or not implemented; they are not being presented as working features or as started tasks. Move an item to active development only when it has an assigned owner and work has begun. Update this document at each release.</p>
+<h3>Remaining phases and completion criteria</h3>
+<table><thead><tr><th>Order</th><th>Work</th><th>Prerequisite or client decision</th><th>Complete when</th></tr></thead><tbody>
+<tr><td>1</td><td>Clinic profile, service/price, and dentist editing</td><td>Confirm editable fields, publication rules, and credential handling</td><td>Approved clinic staff can save their own records; unauthorized edits are rejected; public views show the saved changes</td></tr>
+<tr><td>2</td><td>Dentist-service assignments and schedules</td><td>Confirm working hours, appointment durations, timezone, and closure rules</td><td>Availability is derived from saved schedules and assignments, with invalid overlaps rejected</td></tr>
+<tr><td>3</td><td>Persistent appointment requests</td><td>Finish schedule rules and patient intake fields</td><td>Signed-in patients can submit valid requests; concurrent conflicts are prevented in database transactions; requests survive reloads</td></tr>
+<tr><td>4</td><td>Clinic appointment review</td><td>Agree acceptance/decline rules and responsibilities</td><td>Authorized clinics can review only their own requests and patients can see the saved outcomes</td></tr>
+<tr><td>5</td><td>Deposits and payment confirmation</td><td>Select payment provider, deposit policy, refund process, and operator accounts</td><td>Provider-confirmed callbacks are verified, duplicate events are safe, amounts are checked on the server, and payment records reconcile</td></tr>
+<tr><td>6</td><td>Cancellation, rescheduling, and notifications</td><td>Agree notice periods, allowed transitions, and delivery channels</td><td>Permitted changes are saved consistently and authorized recipients receive the correct notifications</td></tr>
+<tr><td>7</td><td>Completed-visit feedback</td><td>Agree moderation and eligibility rules</td><td>Only eligible completed visits can receive feedback and publication follows the agreed policy</td></tr>
+<tr><td>8</td><td>Account recovery and operational strengthening</td><td>Select email delivery, recovery procedures, backup ownership, and MFA scope</td><td>Recovery and verification are tested; scheduled backups and restore checks operate; required monitoring and controls are documented</td></tr>
+</tbody></table>
+<p>Each phase includes phone testing, access-control checks, real database persistence, failure handling, and updated documentation. Dates and effort estimates should be agreed after reviewing the phase&#x27;s detailed requirements and dependencies.</p>
+<h3>Decisions still needed</h3>
+<p>The next planning discussion should confirm who maintains clinic content, which credentials/documents may be stored, schedule and booking rules, deposit/refund policies, payment provider access, notification channels, backup retention, and the named operational owner. These decisions affect the design of the remaining workflows.</p>
+<h3>Release workflow</h3>
+<ol>
+<li>Agree the phase scope and acceptance criteria.</li>
+<li>Implement and test in the development environment.</li>
+<li>Review the behavior with the project owner on phone and desktop.</li>
+<li>Prepare an approved client release with updated status and release notes.</li>
+<li>Back up production, deploy deliberately, and complete acceptance checks.</li>
+<li>Record the deployed version and operational handover.</li>
+</ol>
+<p>The client repository receives reviewed release snapshots. Changes in the development repository do not deploy to production or update client releases automatically.</p></article><article id="section-docs-07_testing_and_acceptance"><h2>Testing and acceptance</h2>
+<h3>Automated backend checks</h3>
+<p>With Node.js 22 installed, from <code>server/</code>:</p>
+<pre><code>npm ci
+node --test --test-concurrency=1 tests/*.test.js</code></pre>
+<p>These tests check database behavior, registration, approval, roles, record ownership, sessions, origin checks, cookie settings, and public/admin separation. Account integration tests use isolated PostgreSQL-compatible databases through PGlite. Test accounts belong to the test environment, not the live website.</p>
+<h3>Frontend checks</h3>
+<p>From <code>client/</code>:</p>
+<pre><code>npm ci
+npx playwright install chromium
+npm run build
+npm test</code></pre>
+<p>The standard browser suite starts its own local frontend and uses controlled API responses for interaction tests. Checks that require deployed hosts are skipped until their URLs are supplied. A skipped deployment check is not evidence that production was tested.</p>
+<p>For the production public/admin journey checks:</p>
+<pre><code>PLAYWRIGHT_BASE_URL=https://dentabook.forgroup.space PLAYWRIGHT_ADMIN_URL=https://dentabook-admin.forgroup.space npm test -- portals.spec.js</code></pre>
+<p>Use the intended test hostnames if checking another installation; public-link assertions can be configured with <code>PLAYWRIGHT_PATIENT_PUBLIC_URL</code>. A different installed browser can be selected through <code>PLAYWRIGHT_CHANNEL</code> or <code>PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH</code>.</p>
+<p>The deployed-listener checks read real APIs without creating live account records. They do not replace a controlled real-account registration and sign-in check before handover.</p>
+<h3>Client review checklist</h3>
+<table><thead><tr><th>Journey</th><th>Expected result</th></tr></thead><tbody>
+<tr><td>Browse signed out</td><td>Homepage, clinic discovery, treatments, and calculator are reachable</td></tr>
+<tr><td>Empty directory</td><td>A clear empty message, with no fabricated clinic records</td></tr>
+<tr><td>Patient registration/sign-in</td><td>A saved patient account; private pages require its valid session</td></tr>
+<tr><td>Clinic registration</td><td>A pending, unpublished clinic and staff account</td></tr>
+<tr><td>Pending clinic access</td><td>Review status is visible; the approved workspace remains restricted</td></tr>
+<tr><td>Administrator review</td><td>Only an administrator can approve/reject; a rejection requires a reason</td></tr>
+<tr><td>Approved clinic access</td><td>The clinic owner sees its own saved information and counts</td></tr>
+<tr><td>Wrong role</td><td>Patient, clinic, and administrator permissions remain distinct</td></tr>
+<tr><td>Online booking</td><td>A clear unavailable notice until booking submission is implemented</td></tr>
+<tr><td>Logout</td><td>The server session is revoked; private requests fail afterward</td></tr>
+<tr><td>Main-host admin URL</td><td>Administration routes are blocked on the public hostname</td></tr>
+<tr><td>Administrator root</td><td>The redirect preserves its HTTPS hostname or LAN port 3005</td></tr>
+</tbody></table>
+<p>Use authorized test accounts in a test installation for workflows that create or change records. Use real production credentials only with the account owner&#x27;s agreement, and remove temporary verification data through the operator&#x27;s process.</p>
+<h3>Screen sizes</h3>
+<p>Check a phone first. Review 320px, 390px, 768px, and 1440px widths. Pages must avoid horizontal overflow, text fields must be at least 16px, and buttons/navigation actions must have at least a 44 by 44px target. Review registration, sign-in, public navigation, empty/error states, and private workspace layouts.</p>
+<p>Record the release, environment, date, checks run, results, and unresolved issues with each handover. Automated checks reduce regressions; they are not an independent penetration test or a promise that every browser condition has been examined.</p></article><article id="section-docs-08_api_reference"><h2>API reference</h2>
+<p>This appendix is for developers and operators. Browser users should use the normal website forms.</p>
+<h3>Hosts and request rules</h3>
+<p>Public and clinic requests use <code>https://dentabook.forgroup.space/api</code>. Administrator requests use <code>https://dentabook-admin.forgroup.space/api</code>. Browser requests stay on the current host and use its session cookie.</p>
+<p>State-changing requests use JSON, <code>Content-Type: application/json</code>, and <code>X-DentaBook-Request: 1</code>. The server rejects mismatched browser origins and cross-site request metadata. A valid session is still required where shown below. The configured API process rejects routes belonging to another production area with 404.</p>
+<h3>Public and clinic endpoints</h3>
+<table><thead><tr><th>Method</th><th>Path after <code>/api</code></th><th>Access and purpose</th></tr></thead><tbody>
+<tr><td>GET</td><td><code>/health</code></td><td>Reports service and database readiness</td></tr>
+<tr><td>GET</td><td><code>/clinics</code></td><td>Approved public clinic directory</td></tr>
+<tr><td>GET</td><td><code>/clinics/:id</code></td><td>Approved clinic details with active public services/dentists</td></tr>
+<tr><td>POST</td><td><code>/auth/register-patient</code></td><td>Validated patient registration; the role is assigned by the server</td></tr>
+<tr><td>POST</td><td><code>/auth/patient/login</code></td><td>Patient-only sign-in</td></tr>
+<tr><td>POST</td><td><code>/auth/register-clinic</code></td><td>Transactional clinic/staff registration, initially pending review</td></tr>
+<tr><td>POST</td><td><code>/auth/clinic/login</code></td><td>Clinic-staff-only sign-in</td></tr>
+<tr><td>POST</td><td><code>/auth/login</code></td><td>Existing clinic-only compatibility alias</td></tr>
+<tr><td>GET</td><td><code>/auth/me</code></td><td>Valid session; current account and owned clinic information when applicable</td></tr>
+<tr><td>POST</td><td><code>/auth/logout</code></td><td>Revokes the presented session and clears its cookie</td></tr>
+<tr><td>GET</td><td><code>/workspaces/patient/appointments</code></td><td>Patient session; latest 50 linked appointments</td></tr>
+<tr><td>GET</td><td><code>/workspaces/clinic</code></td><td>Approved clinic owner&#x27;s saved clinic details and counts</td></tr>
+</tbody></table>
+<p>Patient registration accepts <code>name</code>, <code>email</code>, <code>phone</code>, and <code>password</code>. Clinic registration accepts <code>ownerName</code>, <code>email</code>, <code>password</code>, <code>clinicName</code>, <code>address</code>, <code>phone</code>, <code>contactEmail</code>, <code>registrationReference</code>, and <code>consent: true</code>. Client-side password confirmation is not a stored field. Unknown role/status fields cannot select elevated privileges.</p>
+<h3>Administrator endpoints</h3>
+<p>The administrator host also provides <code>/health</code>, the public clinic read endpoints, and its own <code>/auth/me</code> and <code>/auth/logout</code> session operations.</p>
+<table><thead><tr><th>Method</th><th>Path after <code>/api</code></th><th>Access and purpose</th></tr></thead><tbody>
+<tr><td>POST</td><td><code>/auth/admin/login</code></td><td>System-administrator-only sign-in</td></tr>
+<tr><td>GET</td><td><code>/workspaces/admin/clinics?status=pending_review</code></td><td>Administrator session; registrations in the chosen status</td></tr>
+<tr><td>POST</td><td><code>/workspaces/admin/clinics/:id/review</code></td><td>Administrator session; review a pending registration</td></tr>
+</tbody></table>
+<p>The review body uses <code>decision: &quot;approved&quot;</code> or <code>decision: &quot;rejected&quot;</code>, with optional <code>notes</code>. Rejection requires nonempty notes. Notes are limited to 2,000 characters. A previously reviewed registration returns a conflict instead of being reviewed again as pending.</p>
+<h3>Responses and errors</h3>
+<p>Successful endpoints return JSON, except logout returns HTTP 204. Sign-in sets a protected cookie; it does not return a bearer token in the response body. Private session/workspace responses use <code>Cache-Control: no-store</code>.</p>
+<table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>200 / 201</td><td>Successful read/action or new registration</td></tr>
+<tr><td>204</td><td>Logout completed</td></tr>
+<tr><td>400</td><td>Invalid input; registration may include field-specific errors</td></tr>
+<tr><td>401</td><td>Sign-in required, expired session, or incorrect login credentials/role</td></tr>
+<tr><td>403</td><td>Role, approval, or origin restrictions deny the request</td></tr>
+<tr><td>404</td><td>Unknown, unpublished, or wrong-portal route/resource</td></tr>
+<tr><td>409</td><td>Duplicate registration or review conflict</td></tr>
+<tr><td>429</td><td>Temporary request-rate limit; follow <code>Retry-After</code></td></tr>
+<tr><td>503</td><td>Service or database temporarily unavailable</td></tr>
+</tbody></table>
+<p>Most errors use an <code>error</code> message, with <code>fields</code> where relevant. <code>/health</code> uses its status/database readiness structure. No appointment-creation, payment, scheduling, or password-reset API is delivered in this snapshot.</p></article><article id="section-docs-09_data_and_security"><h2>Data and security</h2>
+<h3>Stored information</h3>
+<table><thead><tr><th>Record group</th><th>Current use</th></tr></thead><tbody>
+<tr><td>Users</td><td>Name, email, phone where collected, password hash, and assigned role</td></tr>
+<tr><td>Clinics</td><td>Ownership, clinic contact details, description, approval status, submitted reference, and review information</td></tr>
+<tr><td>Dentists and services</td><td>Active public profile information and clinic service prices when records are provisioned</td></tr>
+<tr><td>Sessions</td><td>Token hash, user, sign-in role, creation time, and expiry</td></tr>
+<tr><td>Schema migrations</td><td>Database updates already applied</td></tr>
+<tr><td>Appointments and appointment services</td><td>Existing patient-linked records can be read; website booking creation is not implemented</td></tr>
+<tr><td>Schedules, assignments, payments, reviews</td><td>Schema foundations for later workflows; their complete management features are not available</td></tr>
+</tbody></table>
+<p>Database relationships link clinics to their owners, dentists/services to clinics, and appointments to patients and clinics. The API uses the session&#x27;s account identity for private data rather than trusting a patient or clinic identifier supplied by the browser.</p>
+<h3>Account protection</h3>
+<p>Passwords are hashed with bcrypt at cost 12. They are not stored as readable passwords. Sign-in issues a random 256-bit opaque session token; only its SHA-256 hash is stored in the database. The token is sent in a protected browser cookie and checked against a valid database session on private requests.</p>
+<p>Sessions are bound to the account&#x27;s role. Password-hash or role changes revoke existing sessions through a database trigger. Re-login rotates the presented browser session, logout revokes it, and expiration is enforced on the server. Administrator sessions last one hour; patient/clinic sessions last eight hours.</p>
+<p>Production uses separate public and administrator host-only cookies with <code>Secure</code>, <code>HttpOnly</code>, and <code>SameSite=Strict</code>. The <code>__Host-</code> cookie prefix, a root path, and the absence of a Domain attribute limit cookie scope. Cookies are not isolated by port alone; separate hostnames and cookie names provide administrator session separation.</p>
+<h3>Server and browser controls</h3>
+<p>The APIs validate inputs, enforce roles and clinic approval, parameterize data queries, check request origins, and reject unsupported portal endpoints. Nginx sends content-type, framing, referrer, permissions, and content-security headers. Private workspace and session responses are not cached.</p>
+<p>API processes run as a non-root account with a read-only container filesystem, temporary storage, removed Linux capabilities, and no privilege escalation. PostgreSQL uses an internal Docker network. The production configuration publishes website ports 3003 and 3005, not direct API/database ports.</p>
+<h3>Limits and continuing work</h3>
+<p>HTTPS protects browser-to-proxy traffic when DNS, certificates, and redirects are configured correctly. The proxy-to-application LAN hop and application-to-database Docker hop are not encrypted by the current setup. Database-volume and backup encryption are not automatically configured.</p>
+<p>MFA, self-service password recovery, email verification, durable shared request throttling, and a full security audit trail are future work. Current request limits are stored in each API process&#x27;s memory and reset with that process. The project has automated access-control tests; it has not undergone an independent penetration assessment.</p>
+<p>Operators with host or database access can access stored records. Control access to hosting, database backups, source repositories, and configuration separately. Agree data retention, account support, and recovery responsibilities with the project owner before collecting additional information in later features.</p>
+<h3>Configuration and backups</h3>
+<p>Actual database passwords belong in a private <code>.env</code>, not in source control. Keep backup files private and outside release archives. Preserve included dependency and asset notices. Transfer access through the agreed private process and rotate credentials when access responsibility changes.</p></article><article id="section-docs-10_handover_checklist"><h2>Handover checklist</h2>
+<p>Use this list when reviewing a client release. Record the named owners and acceptance date in the agreed project record; do not place passwords in this file.</p>
+<h3>Delivery review</h3>
+<ul>
+<li>☐ Confirm the delivered release and source-code archive.</li>
+<li>☐ Read the current feature/status table and agree which remaining phases are in scope.</li>
+<li>☐ Confirm that the patient and clinic host is accessible over HTTPS.</li>
+<li>☐ Confirm that the separate administrator host is accessible over HTTPS.</li>
+<li>☐ Review the website on phone, tablet, and desktop.</li>
+<li>☐ Complete the agreed account and clinic-review acceptance checks.</li>
+<li>☐ Review known limitations, especially booking, payments, password recovery, and operational automation.</li>
+</ul>
+<h3>Access and responsibility</h3>
+<ul>
+<li>☐ Assign the website owner and day-to-day administrator.</li>
+<li>☐ Assign the hosting, DNS, certificate, and database operator.</li>
+<li>☐ Provide the first intended administrator account through a private process.</li>
+<li>☐ Confirm repository access and who approves future releases.</li>
+<li>☐ Transfer necessary hosting and DNS access privately.</li>
+<li>☐ Agree where problems and change requests are reported.</li>
+<li>☐ Agree backup frequency, retention, protection, and who verifies recovery.</li>
+<li>☐ Confirm that accounts belonging to previous operators are removed or reviewed when responsibility changes.</li>
+</ul>
+<h3>Ongoing development</h3>
+<p>Keep this client repository as a reviewed release record. Development takes place in its separate working repository and environment. An approved delivery copies the application and updated documentation into this repository without bringing unrelated internal records into the release.</p>
+<p>For each later release, update <code>CHANGELOG.md</code>, the status/development plan, any changed user/API instructions, and the verification record. The client should be able to identify the delivered behavior and outstanding work from those documents without reading development discussions.</p>
+<h3>Review record</h3>
+<table><thead><tr><th>Item</th><th>To be recorded by the responsible parties</th></tr></thead><tbody>
+<tr><td>Release accepted</td><td>Branch, tag, or commit of the client release</td></tr>
+<tr><td>Acceptance date</td><td>Date the review is completed</td></tr>
+<tr><td>Accepted by</td><td>Authorized client representative</td></tr>
+<tr><td>Operations owner</td><td>Hosting/database responsible person</td></tr>
+<tr><td>Support contact</td><td>Agreed reporting channel</td></tr>
+<tr><td>Open items</td><td>Links to the agreed remaining-work list</td></tr>
+<tr><td>Next review</td><td>Agreed review point</td></tr>
+</tbody></table></article><article id="section-docs-dependencies"><h2>Dependency versions</h2>
+<p>These versions come from the delivered lockfiles. Use <code>npm ci</code> to reproduce them. Node.js 22 and PostgreSQL 16 are selected by the Dockerfiles and Compose configuration.</p>
+<h3>Website</h3>
+<table><thead><tr><th>Package</th><th>Locked version</th><th>Use</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>lucide-react</code></td><td>1.64.0</td><td>Runtime</td><td>Icons</td></tr>
+<tr><td><code>react</code></td><td>19.3.1</td><td>Runtime</td><td>Interface components</td></tr>
+<tr><td><code>react-dom</code></td><td>19.3.1</td><td>Runtime</td><td>Browser rendering</td></tr>
+<tr><td><code>react-router-dom</code></td><td>7.18.5</td><td>Runtime</td><td>Page navigation</td></tr>
+<tr><td><code>@playwright/test</code></td><td>1.64.1</td><td>Build/test</td><td>Browser and responsive-layout tests</td></tr>
+<tr><td><code>@vitejs/plugin-react</code></td><td>5.2.0</td><td>Build/test</td><td>React build integration</td></tr>
+<tr><td><code>vite</code></td><td>6.4.5</td><td>Build/test</td><td>Frontend builds and development server</td></tr>
+</tbody></table>
+<h3>API</h3>
+<table><thead><tr><th>Package</th><th>Locked version</th><th>Use</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>bcrypt</code></td><td>6.0.0</td><td>Runtime</td><td>Password hashing</td></tr>
+<tr><td><code>cors</code></td><td>2.8.6</td><td>Runtime</td><td>Allowed browser-origin handling</td></tr>
+<tr><td><code>dotenv</code></td><td>17.4.2</td><td>Runtime</td><td>Private environment configuration</td></tr>
+<tr><td><code>express</code></td><td>4.22.3</td><td>Runtime</td><td>HTTP API framework</td></tr>
+<tr><td><code>pg</code></td><td>8.23.1</td><td>Runtime</td><td>PostgreSQL connection pool</td></tr>
+<tr><td><code>@electric-sql/pglite</code></td><td>0.5.13</td><td>Build/test</td><td>Isolated PostgreSQL-compatible integration tests</td></tr>
+</tbody></table>
+<p>Nginx and base container images currently use the tags declared in the Dockerfiles. Tags can resolve to newer image builds; record image digests with each deployment if an exact container rebuild is required. The lockfiles cover JavaScript package versions, not container image immutability.</p></article><article id="section-docs-asset_notices"><h2>Branding, photography, and font notices</h2>
+<p>The DentaBook logo is supplied project branding and is stored in <code>client/public/branding/dentabook-logo.jpg</code>.</p>
+<p>Illustrative photographs are stored locally in <code>client/public/images</code>. They are not presented as evidence of an actual listed clinic, practitioner, professional qualification, or customer endorsement. The homepage uses <code>hero.jpg</code>; the About page uses <code>clinic-1.jpg</code>. The other included photographs are retained source assets and are not current directory records.</p>
+<table><thead><tr><th>Asset</th><th>Original image source</th></tr></thead><tbody>
+<tr><td><code>hero.jpg</code></td><td>https://images.unsplash.com/photo-1606811841689-23dfddce3e95</td></tr>
+<tr><td><code>clinic-1.jpg</code></td><td>https://images.unsplash.com/photo-1629909613654-28e377c37b09</td></tr>
+<tr><td><code>clinic-2.jpg</code></td><td>https://images.unsplash.com/photo-1629909615184-74f495363b67</td></tr>
+<tr><td><code>clinic-3.jpg</code></td><td>https://images.unsplash.com/photo-1629909615957-be38d48fbbe6</td></tr>
+<tr><td><code>person-1.jpg</code></td><td>https://images.unsplash.com/photo-1559839734-2b71ea197ec2</td></tr>
+<tr><td><code>person-2.jpg</code></td><td>https://images.unsplash.com/photo-1612349317150-e413f6a5b16d</td></tr>
+<tr><td><code>person-3.jpg</code></td><td>https://images.unsplash.com/photo-1594824476967-48c8b964273f</td></tr>
+</tbody></table>
+<p>The font files and their supplied license notices are included together:</p>
+<ul>
+<li><code>client/public/fonts/dm-sans.ttf</code> and <code>dm-sans-license.txt</code>.</li>
+<li><code>client/public/fonts/manrope.ttf</code> and <code>manrope-license.txt</code>.</li>
+</ul>
+<p>Dependency versions are listed in <a href="#section-docs-dependencies">dependency versions</a>. Package-specific notices are provided with the corresponding installed packages. Keep supplied notices with the assets when redistributing the project.</p></article><article id="section-changelog"><h2>Delivery notes</h2>
+<h3>Initial client handoff — 31 October 2026</h3>
+<p>This snapshot includes:</p>
+<ul>
+<li>Public clinic discovery and profiles backed by approved database records.</li>
+<li>Treatment information and clinic-price cost estimation.</li>
+<li>Patient accounts and protected personal pages.</li>
+<li>Clinic registration, registration status, and approved-clinic workspace access.</li>
+<li>Administrator clinic review through a separate administration host.</li>
+<li>Database migrations, account-role checks, secure sessions, and origin checks.</li>
+<li>Docker deployment configuration and automated backend/browser checks.</li>
+<li>User, technical, operations, and remaining-development documentation.</li>
+</ul>
+<p>The <a href="#section-docs-06_status_and_development_plan">status and development plan</a> is the reference for unfinished product features. This handoff does not represent completion of the full appointment and payment workflow.</p></article><footer>DentaBook · Client documentation · Use the source documentation and release notes supplied with each approved update.</footer></main></body></html>
