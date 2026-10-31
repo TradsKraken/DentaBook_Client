@@ -68,3 +68,7 @@ Never use `docker compose down -v` for a routine update: it deletes the named da
 | An administrator link fails on the main site | Use the separate administrator hostname; public-host admin routes are intentionally blocked |
 
 Self-service password resets, MFA, automated email delivery, and provider payments are not available in this release. Escalate those requests to the designated maintainer using the approved maintenance process.
+
+## Versioned production releases
+
+Use the [five-version release manager](13_RELEASE_VERSIONS.md) when releasing tested website changes. It saves the running images and a database backup before the update. Direct Compose updates bypass that saved-version process. Rollback restores application images while preserving the current database; schema compatibility must be reviewed separately.

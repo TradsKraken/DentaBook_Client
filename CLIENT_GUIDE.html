@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DentaBook — Client Handbook</title><style>
 :root{--blue:#126f9c;--ink:#17374b;--line:#d9e7ef}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:#eaf2f7;font:16px/1.65 Arial,sans-serif}main{max-width:1040px;margin:auto;background:#fff;padding:44px}a{color:var(--blue);text-underline-offset:3px}h1,h2,h3,h4{line-height:1.2;break-after:avoid}h1{font-size:44px;margin:24px 0}h2{font-size:30px;color:var(--blue);padding-bottom:12px;border-bottom:2px solid var(--line)}h3{font-size:21px;margin-top:28px}p,li,td{overflow-wrap:anywhere}li{margin:7px 0}article{margin-top:55px}.cover{border-top:8px solid var(--blue);padding:38px 0}.logo{width:230px;max-width:70%;height:auto}.eyebrow{font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}.subtitle{font-size:22px}.note{background:#eff7fb;border-left:4px solid var(--blue);padding:15px 20px}.toc{columns:2;column-gap:32px;padding-left:24px}.toc li{break-inside:avoid}.toc a{display:block;min-height:44px;min-width:44px;padding:8px 0}table{width:100%;border-collapse:collapse;font-size:14px;margin:20px 0}th,td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}th{background:#edf6fb;color:#174968}thead{display:table-header-group}tr{break-inside:avoid}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f8;border:1px solid var(--line);padding:14px;font-size:12px}code{font-family:Consolas,monospace;font-size:.9em}.architecture{margin:24px 0;background:#eff7fb;padding:18px;border:1px solid var(--line)}.architecture>div{display:flex;gap:15px;margin:10px 0}.architecture b,.architecture span{flex:1;padding:10px;background:#fff;border:1px solid var(--line)}.diagram{margin:22px 0;break-inside:avoid}.diagram-viewport{max-width:100%;overflow-x:auto;border:1px solid var(--line);background:#fff;padding:12px}.diagram-viewport a{display:block;width:max-content;min-width:44px;margin:auto}.diagram img{display:block;width:auto;height:auto;max-width:none;max-height:1000px}.diagram-viewport:focus-visible{outline:3px solid var(--blue);outline-offset:3px}figcaption{font-size:13px;color:#526e80}footer{font-size:12px;color:#526e80;border-top:1px solid var(--line);padding-top:18px;margin-top:45px}@media(min-width:768px){main{padding:64px}}@media(max-width:600px){main{padding:22px}h1{font-size:34px}.toc{columns:1}table{font-size:12px}th,td{padding:7px}}@media print{body{background:#fff;font-size:10.5pt;line-height:1.5}main{max-width:none;padding:0}h1{font-size:34pt}h2{font-size:23pt}h3{font-size:15pt}article{break-before:page;margin-top:0}table{font-size:9pt}th,td{padding:7px}pre{font-size:8.5pt}.cover{min-height:150mm;padding-top:30mm}.toc{columns:1}nav{break-before:page}a{color:#126f9c;text-decoration:none}.architecture{break-inside:avoid}.note{break-inside:avoid}.diagram-viewport{overflow:visible;border:0;padding:0}.diagram-viewport a{width:auto;max-width:100%;min-width:0}.diagram img{min-width:0;width:auto;max-width:100%;max-height:180mm;margin:auto;object-fit:contain}.diagram figcaption{font-size:9pt}}
-</style></head><body><main><header class="cover"><img class="logo" src="client/public/branding/dentabook-logo.jpg" alt="DentaBook"><p class="eyebrow">Client documentation · 31 October 2026</p><h1>DentaBook<br>Client Handbook</h1><p class="subtitle">Understanding, operating, and continuing your website.</p><p>Book your smile, know your cost.</p><div class="note"><strong>Current release:</strong> clinic discovery and account foundation. This handbook explains the delivered features, operating procedures, and remaining development phases.</div></header><nav aria-label="Handbook contents"><h2>Contents</h2><ol class="toc"><li><a href="#section-docs-01_project_guide">Project guide</a></li><li><a href="#section-docs-02_user_guide">User guide</a></li><li><a href="#section-docs-03_technical_overview">Technical overview</a></li><li><a href="#section-docs-04_setup_and_deployment">Setup and deployment</a></li><li><a href="#section-docs-05_operations_manual">Operations manual</a></li><li><a href="#section-docs-06_status_and_development_plan">Status and development plan</a></li><li><a href="#section-docs-07_testing_and_acceptance">Testing and acceptance</a></li><li><a href="#section-docs-08_api_reference">API reference</a></li><li><a href="#section-docs-09_data_and_security">Data and security</a></li><li><a href="#section-docs-10_handover_checklist">Handover checklist</a></li><li><a href="#section-docs-11_diagrams_and_workflows">Diagrams and workflows</a></li><li><a href="#section-docs-12_development_history">Development history</a></li><li><a href="#section-docs-dependencies">Dependency versions</a></li><li><a href="#section-docs-asset_notices">Branding, photography, and font notices</a></li><li><a href="#section-changelog">Delivery notes</a></li></ol></nav><article id="section-docs-01_project_guide"><h2>Project guide</h2>
+</style></head><body><main><header class="cover"><img class="logo" src="client/public/branding/dentabook-logo.jpg" alt="DentaBook"><p class="eyebrow">Client documentation · 31 October 2026</p><h1>DentaBook<br>Client Handbook</h1><p class="subtitle">Understanding, operating, and continuing your website.</p><p>Book your smile, know your cost.</p><div class="note"><strong>Current release:</strong> clinic discovery and account foundation. This handbook explains the delivered features, operating procedures, and remaining development phases.</div></header><nav aria-label="Handbook contents"><h2>Contents</h2><ol class="toc"><li><a href="#section-docs-01_project_guide">Project guide</a></li><li><a href="#section-docs-02_user_guide">User guide</a></li><li><a href="#section-docs-03_technical_overview">Technical overview</a></li><li><a href="#section-docs-04_setup_and_deployment">Setup and deployment</a></li><li><a href="#section-docs-05_operations_manual">Operations manual</a></li><li><a href="#section-docs-06_status_and_development_plan">Status and development plan</a></li><li><a href="#section-docs-07_testing_and_acceptance">Testing and acceptance</a></li><li><a href="#section-docs-08_api_reference">API reference</a></li><li><a href="#section-docs-09_data_and_security">Data and security</a></li><li><a href="#section-docs-10_handover_checklist">Handover checklist</a></li><li><a href="#section-docs-11_diagrams_and_workflows">Diagrams and workflows</a></li><li><a href="#section-docs-12_development_history">Website update history</a></li><li><a href="#section-docs-13_release_versions">Production releases and five saved website versions</a></li><li><a href="#section-docs-dependencies">Dependency versions</a></li><li><a href="#section-docs-asset_notices">Branding, photography, and font notices</a></li><li><a href="#section-changelog">Website updates</a></li></ol></nav><article id="section-docs-01_project_guide"><h2>Project guide</h2>
 <h3>Purpose</h3>
 <p>DentaBook brings clinic information, treatment information, and account access into one website. A visitor can compare available clinic information and understand published treatment prices before contacting a clinic.</p>
 <p>The longer-term product includes appointment requests, clinic review of those requests, deposits, appointment tracking, and completed-visit feedback. Those later steps are listed separately in the development plan because they are not available in the current release.</p>
@@ -231,9 +231,11 @@ docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -s reload</
 <tr><td>Temporary too-many-attempts message</td><td>Respect the retry period; repeated requests may have reached the process&#x27;s limit</td></tr>
 <tr><td>An administrator link fails on the main site</td><td>Use the separate administrator hostname; public-host admin routes are intentionally blocked</td></tr>
 </tbody></table>
-<p>Self-service password resets, MFA, automated email delivery, and provider payments are not available in this release. Escalate those requests to the designated maintainer using the approved maintenance process.</p></article><article id="section-docs-06_status_and_development_plan"><h2>Status and development plan</h2>
+<p>Self-service password resets, MFA, automated email delivery, and provider payments are not available in this release. Escalate those requests to the designated maintainer using the approved maintenance process.</p>
+<h3>Versioned production releases</h3>
+<p>Use the <a href="#section-docs-13_release_versions">five-version release manager</a> when releasing tested website changes. It saves the running images and a database backup before the update. Direct Compose updates bypass that saved-version process. Rollback restores application images while preserving the current database; schema compatibility must be reviewed separately.</p></article><article id="section-docs-06_status_and_development_plan"><h2>Status and development plan</h2>
 <p><strong>Snapshot: 31 October 2026.</strong> This document distinguishes delivered behavior from remaining scope. A database table or page address alone does not mean its complete workflow is available.</p>
-<p>For earlier milestones and how the project reached this stage, read the <a href="#section-docs-12_development_history">development history</a>, beginning with the first recorded work on 29 October 2026.</p>
+<p>For earlier website features and fixes, read the <a href="#section-docs-12_development_history">website update history</a>, beginning with the recorded public website features on 29 October 2026. The newer owner portal access is available in the development preview only; it is not deployed to production or included in this client source snapshot.</p>
 <h3>Delivered in this snapshot</h3>
 <table><thead><tr><th>Area</th><th>Available behavior</th></tr></thead><tbody>
 <tr><td>Public website</td><td>Homepage, treatment information, about page, and phone-first navigation</td></tr>
@@ -490,58 +492,96 @@ npm test</code></pre>
 <p><strong>Status: Current sequence.</strong></p>
 <figure class="diagram"><div class="diagram-viewport" role="region" aria-label="Private request permissions — current sequence" tabindex="0"><a href="docs/diagrams/12-private-access-checks.svg" aria-label="Open full-size diagram: Private request permissions — current sequence"><img src="docs/diagrams/12-private-access-checks.svg" alt="Private request permissions — current sequence"></a></div><figcaption>Private request permissions — current sequence · Open the image at full size to zoom.</figcaption></figure>
 <p>A valid cookie alone does not authorize every action. The API checks session expiry, account role, the configured public/admin process, and the workspace&#x27;s rules. Patient records are restricted to the signed-in patient; clinic information is restricted to the owner and approval status. Related database reads needed for approval and ownership are grouped within the permission checks in this overview.</p>
-<p><a href="docs/diagrams/12-private-access-checks.svg">Open full-size SVG</a> · <a href="docs/diagrams/src/12-private-access-checks.mmd">Editable Mermaid source</a></p></article><article id="section-docs-12_development_history"><h2>Development history</h2>
-<p><strong>Reviewed through 31 October 2026.</strong> This history follows the earliest recorded project work through the current client delivery. It explains how the website developed and what each stage contributed.</p>
-<p>Dates use <strong>Philippine time (Asia/Manila, UTC+8)</strong> and refer to recorded development changes. They do not establish when a feature first became available on the live website. Related changes are grouped into milestones. Work completed before the first recorded entry cannot be dated from the available records.</p>
-<h3>29 October 2026 — Requirements and website foundation</h3>
-<h4>1. Project purpose and requirements</h4>
-<p>The first recorded work defined DentaBook&#x27;s purpose: help patients discover dental clinics, understand treatments, and estimate costs. The initial requirements outlined the intended patient, clinic, and administrator responsibilities.</p>
-<p><strong>Result:</strong> a written starting brief. Features described in the brief were requirements, not completed website functions.</p>
-<h4>2. Workflows, feature scope, and architecture planning</h4>
-<p>Project documentation expanded the proposed user journeys, feature scope, and development roadmap. Architecture documents described the intended relationship between the browser interface, application server, and database.</p>
-<p><strong>Result:</strong> a plan for building the system in stages. Future booking, payment, and other proposed workflows remained design work at this point. The current <a href="#section-docs-03_technical_overview">technical overview</a> describes the technology actually delivered.</p>
-<h4>3. Application and database setup</h4>
-<p>The project gained its initial React interface, Node.js/Express server, PostgreSQL database initialization, and Docker configuration.</p>
-<p><strong>Result:</strong> the initial development environment and application structure. This setup was a technical foundation; it did not establish a complete appointment workflow or a production launch.</p>
-<h4>4. Public website, clinic discovery, and cost estimates</h4>
-<p>The public interface expanded to include the homepage, clinic directory and profiles, treatment information, about page, and treatment-cost calculator. DentaBook branding, phone-first page layouts, local fonts and assets, and shared navigation were added. Clinic information was connected to server/database reads, with loading, empty, and error states. Backend and browser checks were introduced alongside this work.</p>
-<p><strong>Result:</strong> visitors could browse the public website and use available clinic information. Cost estimates used published clinic prices and did not create appointments or collect payments.</p>
-<h4>5. Clinic registration and administrator review</h4>
-<p>Clinic/staff registration, sign-in, registration status, and guarded workspaces were introduced. Registration saved an account and an unpublished clinic for review. Administrator functions supported approval or rejection with recorded review details. Account validation, password hashing, database-backed sessions, migrations, and account/access tests accompanied the work.</p>
-<p><strong>Result:</strong> clinic onboarding and review were implemented. The approved-clinic workspace provided saved information; clinic profile, service, price, and dentist editing were still future work.</p>
-<h3>30 October 2026 — Patient access, security, and production preparation</h3>
-<h4>6. Patient accounts and protected personal pages</h4>
-<p>Patient registration, sign-in/out, account pages, and patient-only access checks were added. Appointment reads were restricted to records belonging to the signed-in patient. Sign-in navigation could return a patient to an appropriate protected page. Local startup instructions and scripts were also expanded.</p>
-<p><strong>Result:</strong> patients could create accounts and read their own existing appointment records. This did not introduce online appointment creation, cancellation, or rescheduling.</p>
-<h4>7. Portal separation and session protection</h4>
-<p>Patient, clinic, and administrator routes were separated more clearly. Server checks enforced the required account role. Sessions were tied to the account&#x27;s role, revoked after password or role changes, and given defined expiry periods, including a shorter administrator session. Session creation was strengthened against concurrent credential changes. Production cookie settings, browser security headers, and container/database isolation were also improved, with corresponding access and security checks.</p>
-<p><strong>Result:</strong> stronger access boundaries and session handling. The later production configuration added separate public and administrator hosting processes; unfinished account-recovery and verification features remained planned.</p>
-<h4>8. Local environment configuration</h4>
-<p>Environment configuration and local HTTP testing support were made explicit while retaining the production HTTPS defaults.</p>
-<p><strong>Result:</strong> developers could run the application locally with the correct website origin and environment settings, then prepare production configuration separately.</p>
-<h4>9. Page motion and usability refinement</h4>
-<p>Progressive page-reveal and transition effects were added, including asynchronously loaded content. The effects respected reduced-motion preferences and kept content usable when animation support was unavailable.</p>
-<p><strong>Result:</strong> smoother page presentation while retaining access to the content and controls.</p>
-<h4>10. Production deployment and separate administration</h4>
-<p>Production Docker configuration separated the public/patient-and-clinic website from the administrator website and API process. Portal restrictions, allowed-origin handling, cookie separation, and navigation between the configured website addresses were strengthened. Phone-readable form controls and navigation targets were also refined. The deployment setup kept development and production environments separate.</p>
-<p><strong>Result:</strong> a production configuration with patients and clinics sharing the main website and administration using its own hostname and port. This was deployment and access-control work; it did not complete scheduling, booking, or payment features.</p>
-<h3>31 October 2026 — Client handoff, documentation, and hosting correction</h3>
-<h4>11. Initial client delivery</h4>
-<p>A separate client repository was prepared with application source, configuration templates, user guidance, technical and operations documentation, testing instructions, and a remaining-development plan. A printable handbook and source-integrity checks supported the handoff.</p>
-<p><strong>Result:</strong> the client received a documented release snapshot and instructions for continuing and operating the project.</p>
-<h4>12. Workflow diagrams and visible development status</h4>
-<p>Twelve diagrams were added to explain user journeys, architecture, sessions, database relationships, estimates, release operations, and the future roadmap. The README was expanded with delivered/read-only capabilities, recent changes, current limitations, and the next planned increment. Diagrams and the handbook were checked on phone and desktop sizes and for print layout.</p>
-<p><strong>Result:</strong> clients could understand the current website, its structure, and the remaining work without reading application code. Planned booking diagrams were explicitly labeled as future workflows.</p>
-<h4>13. Public redirect-loop resolution</h4>
-<p>The production proxy settings were corrected after a public redirect loop. The operator confirmed <strong>Force SSL off</strong> and <strong>HTTP/2 Support on</strong> in Nginx Proxy Manager for this deployment. Instructions were updated to match. Public-path checks recorded successful patient and clinic page responses, with one expected sign-in redirect from the administrator root.</p>
-<p><strong>Result:</strong> the public redirect issue was resolved. This was a hosting configuration correction; application features were unchanged. The settings describe the current proxy arrangement and should be reviewed if that arrangement changes.</p>
-<h4>14. Historical update record</h4>
-<p>The earlier recorded work was organized into this dated timeline and a shorter README overview. Delivery notes were extended to cover the website&#x27;s foundation and subsequent development, rather than beginning only at the client handoff. The historical record was included in the HTML/PDF handbook.</p>
-<p><strong>Result:</strong> the client can follow the project from its first recorded requirements through the current release and see how earlier changes relate to today&#x27;s status.</p>
-<h3>Current position and next work</h3>
-<p>The delivered foundation covers public clinic discovery, published-price estimates, patient accounts, clinic onboarding, administrator review, and protected access. Patient appointment lists and the approved-clinic workspace have the read-only limits described in the <a href="#section-docs-06_status_and_development_plan">current status</a>.</p>
-<p><strong>The next planned increment is clinic content management:</strong> authorized clinics maintaining their own profile, services/prices, and dentist information. Scheduling, appointment creation and review, payments, appointment changes, notifications, feedback, and account/operational improvements remain later planned phases. Their presence in early requirements or diagrams does not mean they are implemented.</p>
-<p>Use the <a href="#section-docs-06_status_and_development_plan">status and development plan</a> for present capabilities and acceptance criteria, the <a href="#section-changelog">delivery notes</a> for release summaries, and the <a href="docs/VERIFICATION.md">verification record</a> for the checks recorded for the current delivery. Future releases should extend this history when reviewed work is delivered.</p></article><article id="section-docs-dependencies"><h2>Dependency versions</h2>
+<p><a href="docs/diagrams/12-private-access-checks.svg">Open full-size SVG</a> · <a href="docs/diagrams/src/12-private-access-checks.mmd">Editable Mermaid source</a></p></article><article id="section-docs-12_development_history"><h2>Website update history</h2>
+<p><strong>Reviewed through 31 October 2026.</strong> This history records changes to DentaBook&#x27;s pages, features, account access, and website behavior. Dates use Philippine time (UTC+8). Earlier dates identify recorded feature changes; they do not establish the exact production launch date of each feature.</p>
+<h3>31 October 2026 — Public website access fixed</h3>
+<ul>
+<li>Fixed the repeated redirects that prevented some visitors from opening the website.</li>
+<li>The patient homepage and clinic sign-in now open successfully.</li>
+<li>Opening the administrator website takes the user to administrator sign-in without a redirect loop.</li>
+</ul>
+<p><strong>Status:</strong> confirmed on the live website.</p>
+<h3>30 October 2026 — Patient accounts</h3>
+<ul>
+<li>Added patient registration, sign-in, sign-out, and account information pages.</li>
+<li>Protected booking and personal pages so visitors must sign in with a patient account.</li>
+<li>Added an appointment list that reads only records linked to the signed-in patient, with an empty state when there are no records.</li>
+<li>Returned patients to their intended personal page after sign-in, while rejecting unsafe return addresses.</li>
+</ul>
+<p>The appointment list remains read-only. Creating, cancelling, and rescheduling appointments are not yet available.</p>
+<h3>30 October 2026 — Separate access and stronger account protection</h3>
+<ul>
+<li>Separated patient, clinic, and administrator sign-in and workspace access.</li>
+<li>Kept administrator tools on their own website, without an administrator sign-in link in public navigation.</li>
+<li>Prevented ordinary accounts from entering another account role&#x27;s workspace or reading another patient&#x27;s appointment list.</li>
+<li>Required a fresh sign-in after password or account-role changes and shortened administrator sessions.</li>
+<li>Kept patient and clinic access together on the main website while administration uses its own hostname.</li>
+</ul>
+<p>These are changes to website access and account protection. The current <a href="#section-docs-06_status_and_development_plan">status and development plan</a> describes what each workspace provides.</p>
+<h3>30 October 2026 — Phone usability and page presentation</h3>
+<ul>
+<li>Improved form readability and touch targets on phones.</li>
+<li>Improved links and redirects so they keep the correct website address.</li>
+<li>Added page transitions and content-reveal effects that respect reduced-motion preferences and keep content accessible without animations.</li>
+</ul>
+<h3>29 October 2026 — Public pages and clinic discovery</h3>
+<ul>
+<li>Added the branded homepage, about page, treatment information, and phone-first navigation.</li>
+<li>Added a searchable approved-clinic directory and public clinic profiles.</li>
+<li>Displayed saved clinic details, active services, and active dentist information from the database.</li>
+<li>Added clear loading, empty, and unavailable states instead of invented listings.</li>
+<li>Added treatment-cost estimates using the selected clinic&#x27;s published prices.</li>
+</ul>
+<p>The calculator provides an estimate; it does not submit an appointment or collect payment.</p>
+<h3>29 October 2026 — Clinic registration and review</h3>
+<ul>
+<li>Added clinic/staff registration and sign-in.</li>
+<li>Showed registration status and review notes to the clinic account.</li>
+<li>Added administrator approval and rejection of pending clinic registrations, with a reason required for rejection.</li>
+<li>Made approved clinics eligible for public listing and access to their own workspace.</li>
+<li>Added a read-only clinic workspace showing saved contact details and counts for dentists, published services, and pending appointments.</li>
+</ul>
+<p>Clinic profile, service/price, dentist, and schedule editing are still planned.</p>
+<h3>Development preview — awaiting production release</h3>
+<p>The development website now supports an operator-created owner account that can sign in separately to the patient, clinic, and administrator portals. In the clinic portal, the owner can select an existing clinic to read its workspace. Patient access still reads only that account&#x27;s own appointment records, and ordinary accounts retain their usual restrictions.</p>
+<p><strong>Status: development preview only.</strong> This capability has not been deployed to production and is not included in the application source snapshot supplied by this client release. No preview credentials are part of this history. Review and release are required before presenting it as a live feature.</p>
+<h3>Next planned website update</h3>
+<p>Clinic content management is the next planned increment: authorized clinics maintaining their own profile, service prices, and dentist information. Scheduling, appointment creation/review, payments, appointment changes, notifications, feedback, and account recovery remain later planned phases.</p>
+<p>See the <a href="#section-docs-06_status_and_development_plan">current status and development plan</a> for scope and completion criteria. Future entries should describe what changed on the website, who can use it, and whether it is live, in development preview, or planned. Requirements drafting, documentation edits, repository setup, and other project administration are not website-update entries.</p></article><article id="section-docs-13_release_versions"><h2>Production releases and five saved website versions</h2>
+<p>The production release manager keeps the <strong>five newest saved production versions</strong>. Each version contains the exact running application/container images, a PostgreSQL database backup, the running service configuration, and integrity checksums. Saving the current website does not deploy newer development changes.</p>
+<p>Snapshots are private under <code>.local/production-releases/</code>. This directory is ignored by Git and restricted to the operator. Saved configuration and database files contain private information. Keep this folder off public web hosting.</p>
+<h3>Normal update workflow</h3>
+<ol>
+<li>Make changes and rebuild the development preview using the operator’s separate development setup.</li>
+<li>Review the affected website behavior on phones and desktop and complete the relevant tests.</li>
+<li>Commit the tested source. Do not add untested changes between review and release.</li>
+<li>Deploy using the release manager, describing the actual website feature or fix:</li>
+</ol>
+<pre><code>cd /home/dentabook
+python3 scripts/releases.py deploy --note &quot;Patients can now filter clinics by treatment.&quot;</code></pre>
+<p>The example note illustrates the required wording; use the change actually implemented and tested. The command builds production images, saves the currently running website and database, verifies that saved copy, deploys the application services, and checks the website pages and APIs. The running production database container is retained. Any new application migrations still run on API startup.</p>
+<p>Use this command instead of a direct <code>docker compose build</code> / <code>up</code> when releasing production so version retention and release records are applied. Development rebuilds remain separate and do not create production versions.</p>
+<h3>Five-version retention</h3>
+<p>Completed operations keep at most five saved restore points, ordered by their saved sequence. When a sixth complete copy exists, the oldest saved copy is removed. Its private archive and owned restore-image tags are removed; Docker retains any image still required by an existing container. Unrelated images, development services, production data volumes, and older manually made backups are not globally pruned.</p>
+<p>No old version is removed to make room before the new recovery copy has completed successfully. A failed build or backup leaves the older saved versions intact. If a deployment or rollback fails after its recovery copy is verified, that newest copy is kept and the normal five-version limit still applies. Failed releases are not added to the website-update history. A sixth folder can exist temporarily while a release operation is running.</p>
+<p>Available disk space is checked before saving. A full disk, export failure, invalid database dump, or invalid restore configuration stops the operation. Only one save/deploy/rollback operation can run at a time. Use the release manager for all production releases; simultaneous manual Docker operations are outside that lock.</p>
+<h3>List or save a version</h3>
+<pre><code>python3 scripts/releases.py list
+python3 scripts/releases.py save --note &quot;Current clinic directory, patient accounts, and clinic review.&quot;</code></pre>
+<p>The list shows the exact version IDs needed for rollback, saved dates, and descriptions. A manual save creates a restore point without updating the live website and applies the same five-version limit. The version contains the website actually running at capture time, even when newer source exists in the working folder.</p>
+<h3>Restore a previous website version</h3>
+<p>Choose an exact ID from the list:</p>
+<pre><code>python3 scripts/releases.py rollback VERSION_ID --note &quot;Restored working patient sign-in.&quot;</code></pre>
+<p>The command verifies the saved checksums, saves a rescue copy of the current installation, loads the saved images, restores the application services, and checks the website. It can capture an unhealthy application before rollback as long as the production database remains healthy.</p>
+<p><strong>Rollback preserves the current database.</strong> It does not erase appointments or restore older customer records. Before rolling back across a schema migration, check that the earlier application supports the current database schema. If it does not, use a forward fix or plan a separate, deliberate database recovery. A database restore can discard records created after the backup and is not automated by this command. The saved custom-format dump is available for an operator&#x27;s recovery procedure.</p>
+<p>The saved application images are loaded directly; rollback does not rebuild old source against newer packages. Existing production networks and data volumes are reused. Production configuration can contain passwords, so never copy the saved configuration into a public repository.</p>
+<h3>Website update history</h3>
+<p>A successful deployment or rollback records the supplied website-change description with a date and live status in the private <code>.local/website-updates.json</code>. To review the entries:</p>
+<pre><code>python3 scripts/releases.py history</code></pre>
+<p>Write notes about the website: what changed, who can use it, or what problem was fixed. Do not use raw commit titles, personal work logs, repository tasks, documentation changes, or server setup as website-update entries. Notes for development-only features must remain labeled as preview work until production is actually released. Update the client README/history with the reviewed website entries as part of the handoff; the release command does not automatically publish to GitHub.</p>
+<h3>Verification and limits</h3>
+<p>Automated isolated tests cover the sixth-save deletion rule, exactly five retained versions, unrelated-folder protection, archive corruption, failure paths, locking, production-project selection, and database-preserving rollback. The installed current production baseline was saved and its restore configuration and PostgreSQL archive validated without restarting the website. A production deploy or rollback is not run merely to test this tooling.</p>
+<p>Versions are stored on the same server. They support recovery from a bad release; protection against loss of the entire server requires separate off-host backups. Page/API release checks do not replace feature review, the application test suites, or public-path checks from outside the LAN.</p></article><article id="section-docs-dependencies"><h2>Dependency versions</h2>
 <p>These versions come from the delivered lockfiles. Use <code>npm ci</code> to reproduce them. Node.js 22 and PostgreSQL 16 are selected by the Dockerfiles and Compose configuration.</p>
 <h3>Website</h3>
 <table><thead><tr><th>Package</th><th>Locked version</th><th>Use</th><th>Purpose</th></tr></thead><tbody>
@@ -581,43 +621,17 @@ npm test</code></pre>
 </ul>
 <p>Dependency versions are listed in <a href="#section-docs-dependencies">dependency versions</a>. Package-specific notices are provided with the corresponding installed packages. Keep supplied notices with the assets when redistributing the project.</p>
 <h3>Workflow and technical diagrams</h3>
-<p>Vector diagrams are supplied under <code>docs/diagrams/</code>, with their editable Mermaid source files in <code>docs/diagrams/src/</code>. See the diagram guide for their current/planned status and the diagram README for update instructions. The SVG files are pre-rendered documentation assets; Mermaid is not a website runtime dependency.</p></article><article id="section-changelog"><h2>Delivery notes</h2>
-<h3>Historical development updates — 31 October 2026</h3>
-<p>Added a client-facing <a href="#section-docs-12_development_history">development history</a> from the first recorded requirements on 29 October 2026, with a concise README timeline. Earlier milestones below distinguish planning, implemented website changes, and deployment preparation. Dates are normalized to Philippine time (UTC+8); they record development changes, not individual production launch dates. The refreshed handbook includes the timeline. This release updates documentation only.</p>
-<h3>Public redirect-loop resolution — 31 October 2026</h3>
-<p>Recorded the confirmed Nginx Proxy Manager settings for this deployment: Force SSL off and HTTP/2 Support on. Replaced the earlier Force SSL instruction in the setup guide and added public-versus-LAN redirect checks to operations/testing guidance. Public patient and clinic pages return HTTP 200 without redirects; the administrator root follows one expected sign-in redirect to HTTP 200. This resolves a hosting configuration issue without changing application features.</p>
-<h3>Client development-status summary — 31 October 2026</h3>
-<p>Expanded the README with the delivered website status, read-only capabilities, website improvements included in the handoff, recent documentation updates, current limitations, the next planned clinic-management increment, and later development phases. Added links to verification, diagrams, and the handbook. This is a documentation update; application behavior is unchanged.</p>
-<h3>Workflow and system diagrams — 31 October 2026</h3>
-<p>Added 12 diagrams covering the system architecture, patient/clinic/admin journeys, session checks, account/clinic data, appointment data foundations, planned booking, cost estimates, release operations, and the remaining roadmap. Each diagram includes a vector SVG and editable Mermaid source. Current behavior and planned features are labeled separately. The diagram guide and printable handbook now include these visuals.</p>
-<h3>Initial client handoff — 31 October 2026</h3>
-<p>This snapshot includes:</p>
-<ul>
-<li>Public clinic discovery and profiles backed by approved database records.</li>
-<li>Treatment information and clinic-price cost estimation.</li>
-<li>Patient accounts and protected personal pages.</li>
-<li>Clinic registration, registration status, and approved-clinic workspace access.</li>
-<li>Administrator clinic review through a separate administration host.</li>
-<li>Database migrations, account-role checks, secure sessions, and origin checks.</li>
-<li>Docker deployment configuration and automated backend/browser checks.</li>
-<li>User, technical, operations, and remaining-development documentation.</li>
-</ul>
-<p>The <a href="#section-docs-06_status_and_development_plan">status and development plan</a> is the reference for unfinished product features. This handoff does not represent completion of the full appointment and payment workflow.</p>
-<h3>Earlier development — 30 October 2026</h3>
-<p>The following changes predate the separate client delivery repository:</p>
-<ul>
-<li><strong>Patient accounts:</strong> registration, sign-in/out, protected personal pages, safe return navigation, and account-scoped reading of existing appointment records. Appointment submission and changes remained unavailable.</li>
-<li><strong>Portal and session protection:</strong> clearer role-specific routing, server-side access checks, role-bound sessions, expiry policies, credential/role-change revocation, concurrent credential-change protection, production cookie settings, security headers, and container/database isolation.</li>
-<li><strong>Local configuration:</strong> explicit environment and website-origin configuration, with local HTTP testing support and production HTTPS defaults retained.</li>
-<li><strong>Presentation:</strong> progressive page motion and transitions respecting reduced-motion preferences and retaining usable content without animation support.</li>
-<li><strong>Production preparation:</strong> separate development/production setup, separate public/clinic and administrator hosting/API processes, portal/origin restrictions, and phone control/navigation refinements.</li>
-</ul>
-<p>These are recorded development milestones. They are not claims that every change was deployed publicly on the same date.</p>
-<h3>Earlier development — 29 October 2026</h3>
-<ul>
-<li><strong>Requirements and planning:</strong> the first recorded project brief, intended patient/clinic/administrator workflows, feature specifications, roadmap, and proposed architecture. Proposed workflows were not yet working features.</li>
-<li><strong>Application foundation:</strong> React interface, Node.js/Express server, PostgreSQL initialization, and Docker development configuration.</li>
-<li><strong>Public website:</strong> branded phone-first homepage, about and treatment pages, clinic directory and profiles, database-backed clinic reads, loading/empty/error handling, and published-price cost estimates; backend and browser checks introduced alongside the implementation.</li>
-<li><strong>Clinic onboarding and review:</strong> clinic/staff registration and sign-in, saved pending-clinic submissions, registration/review status, guarded workspaces, and administrator approval or rejection with recorded details. Password hashing, database-backed sessions, validation, migrations, and account tests accompanied the work.</li>
-</ul>
-<p>The workspace and appointment foundations did not include clinic content editing, online booking creation, or payments. See the <a href="#section-docs-12_development_history">full history</a> for the sequence and the <a href="#section-docs-06_status_and_development_plan">current development plan</a> for unfinished scope.</p></article><footer>DentaBook · Client documentation · Use the source documentation and release notes supplied with each approved update.</footer></main></body></html>
+<p>Vector diagrams are supplied under <code>docs/diagrams/</code>, with their editable Mermaid source files in <code>docs/diagrams/src/</code>. See the diagram guide for their current/planned status and the diagram README for update instructions. The SVG files are pre-rendered documentation assets; Mermaid is not a website runtime dependency.</p></article><article id="section-changelog"><h2>Website updates</h2>
+<h3>31 October 2026 — Website access fixed</h3>
+<p>Fixed the repeated redirects that stopped some visitors from opening DentaBook. The patient homepage and clinic sign-in load successfully, and the administrator website opens its sign-in page normally. This correction is confirmed on the live website.</p>
+<h3>30 October 2026 — Patient accounts and personal pages</h3>
+<p>Added patient registration, sign-in/out, account pages, protected personal access, and an appointment list limited to the signed-in patient&#x27;s saved records. Patients return to an appropriate requested page after signing in. Appointment creation, cancellation, and rescheduling remain unavailable.</p>
+<h3>30 October 2026 — Access protection and phone usability</h3>
+<p>Separated patient, clinic, and administrator access, with administration on its own website. Ordinary account roles remain restricted to their workspaces. Password/role changes require fresh sign-in. Improved phone form readability, touch targets, links, redirects, and page transitions respecting reduced-motion preferences.</p>
+<h3>29 October 2026 — Public website and clinic discovery</h3>
+<p>Added the branded public pages, searchable approved-clinic directory, clinic profiles, treatment information, and published-price cost estimates. Listings use saved clinic records and honest loading, empty, and unavailable states. Estimates do not create bookings or collect payment.</p>
+<h3>29 October 2026 — Clinic registration and administrator review</h3>
+<p>Added clinic/staff registration and sign-in, registration status and review notes, administrator approval/rejection, and approved-clinic access to a read-only workspace with saved contact details and counts. Clinic editing and scheduling remain planned.</p>
+<h3>Awaiting production release — Owner portal access</h3>
+<p>Available in the development preview: an explicitly created owner account can sign in to each portal and select existing clinic workspaces. Ordinary-account and personal-appointment restrictions remain enforced. This is not yet live and is not included in this client release&#x27;s application source snapshot.</p>
+<p>Dates for the earlier entries are recorded website-feature dates in Philippine time (UTC+8), not exact production rollout dates. Read the <a href="#section-docs-12_development_history">website update history</a> for the behavior and limits, and the <a href="#section-docs-06_status_and_development_plan">current development plan</a> for unfinished features.</p></article><footer>DentaBook · Client documentation · Use the source documentation and release notes supplied with each approved update.</footer></main></body></html>
