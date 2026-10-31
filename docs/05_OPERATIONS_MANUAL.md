@@ -39,14 +39,11 @@ The backup format is plain SQL. Restoring it into an already initialized databas
 
 ## Installing a new release
 
-Confirm that the release has passed the agreed tests and read its release notes. Back up the database and retain the previous release and its configuration. For a clean client repository checkout, obtain the approved release using the agreed branch or tag, then run:
+Confirm that the release has passed the agreed tests and read its release notes. Obtain and test the approved release using the agreed branch or tag, and commit the intended source. The release manager saves the current running images and a verified database backup before replacing services and retains the five newest saved versions. Then run:
 
 ```bash
-docker compose config --quiet
-docker compose build
-docker compose up -d --wait
-docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -t
-docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -s reload
+python3 scripts/releases.py deploy --note "Describe the tested website feature or fix."
+python3 scripts/releases.py list
 ```
 
 Verify the two HTTPS health endpoints and the user journeys. Database migrations run at startup and may require a recovery plan beyond restarting an old image. The current project has no general automatic migration-down command.

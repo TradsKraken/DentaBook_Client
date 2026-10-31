@@ -159,6 +159,7 @@ curl --fail http://localhost:3000/api/health</code></pre>
 docker compose build
 docker compose up -d --wait
 docker compose ps</code></pre>
+<p>The commands above are for initial installation. For later production updates, use the <a href="#section-docs-13_release_versions">five-version release process</a> so the running website and database are saved before replacement.</p>
 <p>The database initializes a new persistent volume on first startup. API startup applies pending migrations. An existing volume is reused on later deployments. Changing an environment password does not automatically change the password inside an existing database.</p>
 <p>Production contains four services: the website, the public/clinic API, the administrator API, and PostgreSQL. The APIs and database have no published host ports. The website exposes ports 3003 and 3005 for the upstream reverse proxy.</p>
 <h3>Nginx Proxy Manager</h3>
@@ -211,12 +212,9 @@ docker compose exec -T db sh -c &#x27;pg_dump -U &quot;$POSTGRES_USER&quot; &quo
 </ol>
 <p>The backup format is plain SQL. Restoring it into an already initialized database may conflict with existing tables or records; prepare an empty recovery database and stop on errors. Do not attempt a production restore by trial and error.</p>
 <h3>Installing a new release</h3>
-<p>Confirm that the release has passed the agreed tests and read its release notes. Back up the database and retain the previous release and its configuration. For a clean client repository checkout, obtain the approved release using the agreed branch or tag, then run:</p>
-<pre><code>docker compose config --quiet
-docker compose build
-docker compose up -d --wait
-docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -t
-docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -s reload</code></pre>
+<p>Confirm that the release has passed the agreed tests and read its release notes. Obtain and test the approved release using the agreed branch or tag, and commit the intended source. The release manager saves the current running images and a verified database backup before replacing services and retains the five newest saved versions. Then run:</p>
+<pre><code>python3 scripts/releases.py deploy --note &quot;Describe the tested website feature or fix.&quot;
+python3 scripts/releases.py list</code></pre>
 <p>Verify the two HTTPS health endpoints and the user journeys. Database migrations run at startup and may require a recovery plan beyond restarting an old image. The current project has no general automatic migration-down command.</p>
 <p>Never use <code>docker compose down -v</code> for a routine update: it deletes the named database volume. <code>docker compose down</code> stops the stack without deleting that named volume. Keep production configuration independent from local testing.</p>
 <h3>Common problems</h3>
