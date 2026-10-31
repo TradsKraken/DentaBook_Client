@@ -167,7 +167,13 @@ docker compose ps</code></pre>
 <tr><td><code>dentabook.forgroup.space</code></td><td><code>http</code></td><td>Production server LAN address</td><td><code>3003</code></td></tr>
 <tr><td><code>dentabook-admin.forgroup.space</code></td><td><code>http</code></td><td>Production server LAN address</td><td><code>3005</code></td></tr>
 </tbody></table>
-<p>Install a valid certificate for each exact name and enable Force SSL. Forward the entire hostname; the application already handles <code>/api</code> forwarding. Do not create a separate clinic host. Clinic access uses <code>/clinic/sign-in</code> on the main website. Use Cloudflare Full (strict) encryption when the DNS records are proxied through Cloudflare.</p>
+<p>Keep the existing certificates for the exact hostnames. For this deployment, the confirmed Nginx Proxy Manager SSL options are:</p>
+<table><thead><tr><th>Option</th><th>Confirmed setting</th></tr></thead><tbody>
+<tr><td>Force SSL</td><td><strong>Off</strong></td></tr>
+<tr><td>HTTP/2 Support</td><td><strong>On</strong></td></tr>
+</tbody></table>
+<p>Enabling Force SSL on this proxy path caused repeated redirects; disabling it resolved the public-site loop. These are the working settings for the current Cloudflare/NPM deployment, not a universal rule for every installation. Force SSL controls an HTTP-to-HTTPS redirect; disabling that option does not disable the existing browser-facing HTTPS service. Cloudflare-to-origin encryption is a separate configuration and must not be inferred from this switch.</p>
+<p>Forward the entire hostname; the application already handles <code>/api</code> forwarding. Do not create a separate clinic host. Clinic access uses <code>/clinic/sign-in</code> on the main website.</p>
 <p>The administrator root redirects to <code>/admin/sign-in</code>. Redirects are relative so they preserve the browser&#x27;s HTTPS hostname or the published LAN port.</p>
 <h3>First administrator</h3>
 <p>An operator creates the first real administrator interactively:</p>
@@ -178,6 +184,7 @@ docker compose ps</code></pre>
 curl --fail https://dentabook-admin.forgroup.space/api/health
 curl --fail --location --head https://dentabook-admin.forgroup.space/
 curl --fail --head https://dentabook.forgroup.space/clinic/sign-in</code></pre>
+<p>Check public Internet access separately from LAN access: local DNS may bypass Cloudflare. The public patient and clinic pages should return 200 without a repeated redirect. The administrator root should make one redirect to its sign-in page, then return 200.</p>
 <p>Both health responses should report <code>healthy</code> and a connected database. Administrator pages must return 404 on the public host; patient and clinic pages must return 404 on the administrator host. Then run the <a href="#section-docs-07_testing_and_acceptance">acceptance checks</a>.</p>
 <p>If the domains change, update the origins in <code>.env</code>, rebuild the client, recreate the API services, and update DNS/certificates. Public and clinic links are configured during the website build.</p></article><article id="section-docs-05_operations_manual"><h2>Operations manual</h2>
 <h3>Routine checks</h3>
@@ -214,6 +221,7 @@ docker compose exec -T client nginx -c /etc/nginx/portals/nginx.conf -s reload</
 <p>Never use <code>docker compose down -v</code> for a routine update: it deletes the named database volume. <code>docker compose down</code> stops the stack without deleting that named volume. Keep production configuration independent from local testing.</p>
 <h3>Common problems</h3>
 <table><thead><tr><th>Symptom</th><th>What to check</th></tr></thead><tbody>
+<tr><td>Repeated redirects through the public hostname</td><td>For this confirmed deployment, keep NPM Force SSL off and HTTP/2 Support on. Compare the public and LAN routes; a successful LAN check alone does not verify the Cloudflare path.</td></tr>
 <tr><td>Proxy shows 502</td><td>Container status, production server address, correct upstream port, LAN reachability, and application logs</td></tr>
 <tr><td>Certificate or hostname error</td><td>Exact Proxy Host name, DNS record, matching certificate, and renewal status</td></tr>
 <tr><td>Sign-in form works but session does not persist</td><td>HTTPS, correct browser hostname, production origins, cookies, and API health</td></tr>
@@ -281,6 +289,7 @@ npm test</code></pre>
 <p>For the production public/admin journey checks:</p>
 <pre><code>PLAYWRIGHT_BASE_URL=https://dentabook.forgroup.space PLAYWRIGHT_ADMIN_URL=https://dentabook-admin.forgroup.space npm test -- portals.spec.js</code></pre>
 <p>Use the intended test hostnames if checking another installation; public-link assertions can be configured with <code>PLAYWRIGHT_PATIENT_PUBLIC_URL</code>. A different installed browser can be selected through <code>PLAYWRIGHT_CHANNEL</code> or <code>PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH</code>.</p>
+<p>Browser checks use the test machine&#x27;s DNS resolver, which can point a public hostname directly to a LAN proxy. Also verify from an external connection or resolve the hostname through public DNS and test that address explicitly. Confirm no repeated same-URL redirects on the public patient/clinic host; the admin root has one expected sign-in redirect.</p>
 <p>The deployed-listener checks read real APIs without creating live account records. They do not replace a controlled real-account registration and sign-in check before handover.</p>
 <h3>Client review checklist</h3>
 <table><thead><tr><th>Journey</th><th>Expected result</th></tr></thead><tbody>
@@ -363,7 +372,7 @@ npm test</code></pre>
 <p>The APIs validate inputs, enforce roles and clinic approval, parameterize data queries, check request origins, and reject unsupported portal endpoints. Nginx sends content-type, framing, referrer, permissions, and content-security headers. Private workspace and session responses are not cached.</p>
 <p>API processes run as a non-root account with a read-only container filesystem, temporary storage, removed Linux capabilities, and no privilege escalation. PostgreSQL uses an internal Docker network. The production configuration publishes website ports 3003 and 3005, not direct API/database ports.</p>
 <h3>Limits and continuing work</h3>
-<p>HTTPS protects browser-to-proxy traffic when DNS, certificates, and redirects are configured correctly. The proxy-to-application LAN hop and application-to-database Docker hop are not encrypted by the current setup. Database-volume and backup encryption are not automatically configured.</p>
+<p>Public browser HTTPS has been verified. For this deployment, NPM Force SSL is off and HTTP/2 Support is on; forcing a redirect at NPM caused a public redirect loop. The Force SSL switch is a redirect setting, not proof of encryption on every connection. Cloudflare-to-NPM transport depends on its separate origin/TLS configuration and was not established by these redirect checks. The NPM-to-application LAN hop and application-to-database Docker hop are not encrypted by the current setup. Database-volume and backup encryption are not automatically configured.</p>
 <p>MFA, self-service password recovery, email verification, durable shared request throttling, and a full security audit trail are future work. Current request limits are stored in each API process&#x27;s memory and reset with that process. The project has automated access-control tests; it has not undergone an independent penetration assessment.</p>
 <p>Operators with host or database access can access stored records. Control access to hosting, database backups, source repositories, and configuration separately. Agree data retention, account support, and recovery responsibilities with the project owner before collecting additional information in later features.</p>
 <h3>Configuration and backups</h3>
@@ -521,6 +530,8 @@ npm test</code></pre>
 <p>Dependency versions are listed in <a href="#section-docs-dependencies">dependency versions</a>. Package-specific notices are provided with the corresponding installed packages. Keep supplied notices with the assets when redistributing the project.</p>
 <h3>Workflow and technical diagrams</h3>
 <p>Vector diagrams are supplied under <code>docs/diagrams/</code>, with their editable Mermaid source files in <code>docs/diagrams/src/</code>. See the diagram guide for their current/planned status and the diagram README for update instructions. The SVG files are pre-rendered documentation assets; Mermaid is not a website runtime dependency.</p></article><article id="section-changelog"><h2>Delivery notes</h2>
+<h3>Public redirect-loop resolution — 31 October 2026</h3>
+<p>Recorded the confirmed Nginx Proxy Manager settings for this deployment: Force SSL off and HTTP/2 Support on. Replaced the earlier Force SSL instruction in the setup guide and added public-versus-LAN redirect checks to operations/testing guidance. Public patient and clinic pages return HTTP 200 without redirects; the administrator root follows one expected sign-in redirect to HTTP 200. This resolves a hosting configuration issue without changing application features.</p>
 <h3>Client development-status summary — 31 October 2026</h3>
 <p>Expanded the README with the delivered website status, read-only capabilities, website improvements included in the handoff, recent documentation updates, current limitations, the next planned clinic-management increment, and later development phases. Added links to verification, diagrams, and the handbook. This is a documentation update; application behavior is unchanged.</p>
 <h3>Workflow and system diagrams — 31 October 2026</h3>
