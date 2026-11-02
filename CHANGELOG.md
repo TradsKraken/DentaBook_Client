@@ -1,5 +1,11 @@
 # Website updates
 
+## 3 November 2026 — Appointment requests and clinic setup (development preview)
+
+The supplied source and development preview now let approved clinics edit their profile, services/prices, dentist profiles, and weekly working hours, including publication controls and dentist-service assignments. Signed-in patients can choose real available times and send persistent requests for one treatment. Pending requests reserve time, overlapping submissions are rejected atomically, and identical retries return the saved request. Clinics can accept or decline pending requests with an audited decision and patient-visible notes. Patients can refresh their own appointments to read the outcome.
+
+These changes are **development-preview-only** and have not been deployed to production. Payments, final confirmation, appointment changes, reminders, completion, and reviews remain planned. The [status and development plan](docs/06_STATUS_AND_DEVELOPMENT_PLAN.md) records the booking rules and limitations.
+
 ## 31 October 2026 — Website access fixed
 
 Fixed the repeated redirects that stopped some visitors from opening DentaBook. The patient homepage and clinic sign-in load successfully, and the administrator website opens its sign-in page normally. This correction is confirmed on the live website.
@@ -22,6 +28,6 @@ Added clinic/staff registration and sign-in, registration status and review note
 
 ## Awaiting production release — Owner portal access
 
-Available in the development preview: an explicitly created owner account can sign in to each portal and select existing clinic workspaces. Ordinary-account and personal-appointment restrictions remain enforced. This is not yet live and is not included in this client release's application source snapshot.
+Available in the development preview: an explicitly created owner account can sign in to each portal and select existing clinic workspaces. Ordinary-account and personal-appointment restrictions remain enforced. This is not yet live and is implemented in the supplied source for development use.
 
 Dates for the earlier entries are recorded website-feature dates in Philippine time (UTC+8), not exact production rollout dates. Read the [website update history](docs/12_DEVELOPMENT_HISTORY.md) for the behavior and limits, and the [current development plan](docs/06_STATUS_AND_DEVELOPMENT_PLAN.md) for unfinished features.
