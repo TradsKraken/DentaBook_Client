@@ -4,7 +4,7 @@
 
 DentaBook helps people find approved dental clinics, explore treatments, and estimate costs using a clinic's published prices. Patients can create accounts, clinic representatives can submit their clinics for review, and platform administrators can approve or reject those submissions.
 
-**Updated 3 November 2026.** The supplied source and development preview now include clinic setup, dentist-service assignments, available appointment times, patient requests, and clinic acceptance/decline. These new tools are **development preview only**; updating this repository does not deploy production.
+**Updated 4 November 2026.** The supplied source and development preview now include clinic setup, dentist-service assignments, available appointment times, patient requests, and clinic acceptance/decline. These new tools are **development preview only**; updating this repository does not deploy production.
 
 [Development status](#development-status) · [Recent updates](#recent-updates) · [Website history](#website-update-history) · [Next planned release](#next-planned-release) · [Website addresses](#website-addresses) · [Documentation](#documentation)
 
@@ -32,6 +32,7 @@ The development preview now supports each clinic’s own direct GCash account, d
 
 | Date | Website change | Status |
 | --- | --- | --- |
+| 4 November 2026 | Easier weekly hours: apply days/times together, optional lunch break, AM/PM summaries, and day-off switches | Supplied source included; production deployment pending |
 | 3 November 2026 | Direct GCash deposits, staff verification, private receipts, and unpaid Pay at clinic confirmation with each clinic’s own policy | Development preview; supplied source included |
 | 3 November 2026 | Clinic workspace redesigned with task navigation, searchable lists, focused edit/review panels, grouped schedules, and booking setup guidance | Development preview; supplied source included |
 | 3 November 2026 | Booking automatically uses the signed-in patient’s registered email | Development preview; supplied source included |

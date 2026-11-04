@@ -23,6 +23,10 @@ async function fixture(page) {
         record.status = body.decision; record.reviewNotes = body.notes;
         return respond({ appointment: record, pendingAppointments: pending() });
       }
+      if (path.endsWith("/schedules/weekly")) {
+        state.schedules = [...state.schedules.filter(item=>item.dentistId!==body.dentistId), ...body.hours.map((h,index)=>({...h,dentistId:body.dentistId,id:`weekly-${index}`}))];
+        return respond({saved:true});
+      }
       const [, resource, id] = path.match(/\/manage\/(services|dentists|schedules)(?:\/([^/]+))?$/) || [];
       if (request.method() === "DELETE") { state[resource] = state[resource].filter(item => item.id !== id); return respond({ removed: true }); }
       const item = { ...body, id: id || `${resource}-${state[resource].length + 1}` };
@@ -75,19 +79,21 @@ test("staff maintain their profile, services, dentists, and hours through the cl
   expect(state.services[0].isActive).toBe(false);
   await addDentist(page);
   await clinicSection(page, "Working hours");
-  await page.getByRole("button", { name: "Add working hours", exact: true }).click();
+  await page.getByRole("button", { name: "Set working hours", exact: true }).click();
   await page.getByLabel("Dentist", { exact: true }).selectOption("dentists-1");
-  await page.getByLabel("Day of week", { exact: true }).selectOption("1");
-  await page.getByLabel("Start time", { exact: true }).fill("09:00");
-  await page.getByLabel("End time", { exact: true }).fill("12:00");
+  await page.getByRole("button",{name:"Monday–Friday",exact:true}).click();
+  await page.getByLabel("Opening time",{exact:true}).fill("09:00");
+  await page.getByLabel("Closing time",{exact:true}).fill("12:00");
+  await page.getByRole("button",{name:"Apply hours to selected days",exact:true}).click();
   await page.getByRole("button", { name: "Save working hours", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByText("Monday · 09:00–12:00", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.locator(".clinic-page-header h1")).toHaveText("Working hours");
   await page.getByRole("button", { name: "Remove Monday 09:00 schedule for Test Dentist", exact: true }).click();
-  await expect(page.getByText("No working hours saved yet.", { exact: true })).toBeVisible();
-  expect(state.schedules).toHaveLength(0); expect(state.writes.every(write => write.header === "1")).toBe(true);
+  await expect(page.getByText("Monday · 09:00–12:00", {exact:true})).toHaveCount(0);
+  await expect(page.getByText("Tuesday · 09:00–12:00", {exact:true})).toBeVisible();
+  expect(state.schedules).toHaveLength(4); expect(state.writes.every(write => write.header === "1")).toBe(true);
   await clinicSection(page, "Dentists");
   await page.getByRole("button", { name: "Edit Test Dentist", exact: true }).click();
   await page.getByLabel("Publish this dentist on the clinic profile", { exact: false }).uncheck();
@@ -170,6 +176,12 @@ test("clinic workspace, data lists, schedules, and editor panels fit required sc
       await clinicSection(page, label); await check(`${label} at ${width}`);
       if (width === 390 || width === 1440) await page.screenshot({ path: testInfo.outputPath(`workspace-${label.replaceAll(/[^a-z]/gi,"-")}-${width}.png`), fullPage: true });
     }
+    await clinicSection(page, "Working hours");
+    await page.getByRole("button",{name:"Set working hours",exact:true}).click();
+    await page.getByRole("dialog").locator("summary").filter({hasText:"Set the same hours for several days"}).click();
+    await check(`Weekly hours editor at ${width}`);
+    await page.screenshot({path:testInfo.outputPath(`weekly-hours-${width}.png`),fullPage:false});
+    await page.getByRole("button",{name:"Close panel",exact:true}).click();
     await clinicSection(page, "Services & prices"); await page.getByRole("button", { name: "Add a service", exact: true }).click();
     await check(`Service editor at ${width}`); expect(await page.getByRole("dialog").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     if (width === 390 || width === 1440) await page.screenshot({ path: testInfo.outputPath(`service-editor-${width}.png`), fullPage: false });

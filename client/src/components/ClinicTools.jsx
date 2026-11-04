@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, Building2, CalendarDays, CheckCircle2, ChevronDown, CreditCard, ClipboardList, Clock3, ExternalLink, LayoutDashboard, MapPin, Menu, Pencil, Plus, RefreshCw, Search, Stethoscope, Tags, UsersRound } from "lucide-react";
+import WeeklyHours from "./WeeklyHours";
 import ClinicInbox from "./ClinicInbox";
 import ClinicPayments from "./ClinicPayments";
 import { ClinicDrawer, ClinicEmpty, ClinicStatus } from "./ClinicUi";
@@ -127,15 +128,22 @@ function Catalog({ type, data, request, saved, services, assignments }) {
     </ClinicDrawer>}
   </section>;
 }
-function ScheduleEditor({ dentists, request, saved, cancel, onBusyChange }) {
-  const [form, setForm] = useState({ dentistId: "", day: "1", start: "", end: "" });
-  const change = event => setForm({ ...form, [event.target.name]: event.target.value });
-  return <Editor title="Add working hours" submitLabel="Save working hours" request={body => request("/schedules", "POST", { ...body, day: Number(body.day) })} body={form} onSaved={() => saved("Working hours saved.")} onCancel={cancel} onBusyChange={onBusyChange}>
-    <label className="field">Dentist<select aria-label="Dentist" name="dentistId" value={form.dentistId} onChange={change} required><option value="">Choose a dentist</option>{dentists.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select></label>
-    <label className="field">Day of week<select aria-label="Day of week" name="day" value={form.day} onChange={change}>{days.map((day, i) => <option value={i} key={day}>{day}</option>)}</select></label>
-    <div className="clinic-form-row"><Input label="Start time" name="start" type="time" value={form.start} onChange={change} required /><Input label="End time" name="end" type="time" value={form.end} onChange={change} required /></div>
-    <p className="clinic-field-help">All times are Philippine time. Add separate entries for split shifts. Hours for the same dentist cannot overlap.</p>
-  </Editor>;
+function ScheduleEditor({ dentists, schedules, request, saved, cancel, onBusyChange }) {
+  const [dentistId,setDentistId]=useState(dentists.length===1?dentists[0].id:"");
+  const [busy,setBusy]=useState(false), [error,setError]=useState("");
+  const selected=dentists.find(item=>item.id===dentistId);
+  async function saveWeek(path,body) {
+    setBusy(true);onBusyChange?.(true);setError("");
+    try { await request("/schedules/weekly","PUT",{dentistId,hours:body.hours});saved("Working hours saved.");return true; }
+    catch(error) {setError(error.message);return false;}
+    finally {setBusy(false);onBusyChange?.(false);}
+  }
+  return <div className="clinic-editor weekly-hours-editor"><fieldset disabled={busy} className="weekly-hours-fields">
+    <label className="field">Dentist<select aria-label="Dentist" value={dentistId} onChange={event=>{setDentistId(event.target.value);setError("");}}><option value="">Choose a dentist</option>{dentists.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+    {error&&<p className="form-error" role="alert">{error}</p>}
+    {selected?<WeeklyHours key={dentistId} dentist={{id:dentistId,full_name:selected.name,service_ids:[],hours:schedules.filter(item=>item.dentistId===dentistId).map(({day,start,end})=>({day,start,end}))}} timezone="Asia/Manila" save={saveWeek}/>:<p>Choose the dentist whose working week you want to set.</p>}
+    <button className="button secondary" type="button" onClick={cancel}>Cancel editing</button>
+  </fieldset></div>;
 }
 function Schedules({ data, request, saved, navigate }) {
   const [adding, setAdding] = useState(false), [busy, setBusy] = useState(false), [removing, setRemoving] = useState(""), [error, setError] = useState("");
@@ -145,7 +153,7 @@ function Schedules({ data, request, saved, navigate }) {
   return <section className="clinic-surface">
     <div className="clinic-toolbar"><div className="clinic-toolbar-copy"><h2>Weekly schedule</h2><p>Recurring hours · Philippine time</p></div>
       <select className="clinic-schedule-filter" aria-label="Filter schedules by dentist" value={dentistId} onChange={event => setDentistId(event.target.value)}><option value="">All dentists</option>{data.dentists.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
-      <button className="button" disabled={!active.length} onClick={() => setAdding(true)}><Plus size={17} />Add working hours</button>
+      <button className="button" disabled={!active.length} onClick={() => setAdding(true)}><Plus size={17} />Set working hours</button>
     </div>
     {error && <p className="clinic-feedback error" role="alert">{error}</p>}
     {!active.length ? <ClinicEmpty icon={Stethoscope} title="Add a published dentist first" action={<button className="button secondary" onClick={() => navigate("dentists")}>Manage dentists</button>}>Publish a dentist profile before setting working hours.</ClinicEmpty> : !shown.length ? <ClinicEmpty icon={Clock3} title="No working hours saved yet.">Add your dentist’s recurring hours to make appointment times available.</ClinicEmpty> : <div className="clinic-week">
@@ -166,7 +174,7 @@ function Schedules({ data, request, saved, navigate }) {
       })}
     </div>}
     <div className="clinic-surface-note"><CheckCircle2 size={16} /><p>Hours control new requests. Existing appointments keep their saved visit times when you change this schedule.</p></div>
-    {adding && <ClinicDrawer title="Add working hours" busy={busy} onClose={() => setAdding(false)}><ScheduleEditor dentists={active} request={request} onBusyChange={setBusy} saved={message => { setAdding(false); saved(message); }} cancel={() => setAdding(false)} /></ClinicDrawer>}
+    {adding && <ClinicDrawer title="Set working hours" busy={busy} onClose={() => setAdding(false)}><ScheduleEditor dentists={active} schedules={data.schedules} request={request} onBusyChange={setBusy} saved={message => { setAdding(false); saved(message); }} cancel={() => setAdding(false)} /></ClinicDrawer>}
   </section>;
 }
 function Overview({ data, counts, navigate }) {

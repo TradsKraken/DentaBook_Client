@@ -100,3 +100,14 @@ All reads require the relevant server-validated role/session; mutations also req
 | GET | `/workspaces/clinic/manage/payments/:id/receipt` | Owning clinic’s verified receipt |
 
 Clinic owner selectors retain `clinicId` on all clinic payment requests. All payment choices/reviews lock the clinic and appointment in a transaction. Payment choice keys, active choices, receipt codes, and verified GCash references have database uniqueness protection. The server computes deposits with integer centavo rounding and snapshots terms/recipient before a transfer. Pay at clinic stores the estimated amount due with pending status; it never creates a received-payment receipt.
+
+## Weekly working-hours update — 4 November 2026
+
+`PUT /workspaces/clinic/manage/schedules/weekly` accepts `{dentistId, hours}`.
+Each hours entry contains integer `day` (0 Sunday through 6 Saturday), `start`,
+and `end` in 24-hour HH:MM form. An empty array makes the whole week unavailable.
+Up to 42 non-overlapping same-day periods are supported. A successful request
+atomically replaces the selected active own-clinic dentist’s schedules; invalid
+requests leave the existing week intact. Session, clinic approval, ownership,
+owner selector and origin rules are unchanged. The administrator host rejects
+this clinic endpoint. Existing appointment records are preserved.

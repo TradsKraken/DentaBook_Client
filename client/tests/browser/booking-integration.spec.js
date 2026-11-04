@@ -34,11 +34,15 @@ test("real clinic setup, patient booking, acceptance, decline, and patient statu
     await staff.getByRole("button",{name:"Save dentist",exact:true}).tap();
     await expect(staff.getByRole("status").filter({hasText:"Dentist saved"})).toBeVisible();
     await clinicSection(staff,"Working hours");
-    await staff.getByRole("button",{name:"Add working hours",exact:true}).click();
+    await staff.getByRole("button",{name:"Set working hours",exact:true}).click();
     await staff.getByLabel("Dentist",{exact:true}).selectOption(dentistId);
-    await staff.getByLabel("Day of week",{exact:true}).selectOption(String(new Date(tomorrow()+"T00:00:00Z").getUTCDay()));
-    await staff.getByLabel("Start time",{exact:true}).fill("09:00");
-    await staff.getByLabel("End time",{exact:true}).fill("17:00");
+    await staff.getByRole("button",{name:"Every day",exact:true}).click();
+    await staff.getByLabel("Opening time",{exact:true}).fill("09:00");
+    await staff.getByLabel("Closing time",{exact:true}).fill("17:00");
+    await staff.getByLabel("Include a lunch break").check();
+    await staff.getByLabel("Break starts",{exact:true}).fill("12:00");
+    await staff.getByLabel("Break ends",{exact:true}).fill("13:00");
+    await staff.getByRole("button",{name:"Apply hours to selected days",exact:true}).click();
     await staff.getByRole("button",{name:"Save working hours",exact:true}).click();
     await expect(staff.getByRole("status").filter({hasText:"Working hours saved"})).toBeVisible();
     await login(patient,"patient","patient@example.test");
@@ -48,6 +52,7 @@ test("real clinic setup, patient booking, acceptance, decline, and patient statu
       await patient.getByLabel("Dentist",{exact:true}).selectOption(dentistId);
       await patient.getByLabel("Visit date",{exact:true}).fill(tomorrow());
       await expect(patient.getByRole("button",{name:/09:00–09:30|09:30–10:00/}).first()).toBeVisible();
+      await expect(patient.getByRole("button",{name:"12:00–12:30",exact:true})).toHaveCount(0);
     }
     await chooseVisit();
     await expect(patient.getByLabel("Contact email",{exact:true})).toHaveValue("patient@example.test");

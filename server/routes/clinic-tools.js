@@ -120,6 +120,17 @@ function createClinicToolsRouter(pool,{payments}={}) {
     const result = await db.query("INSERT INTO dentist_schedules (dentist_id,day_of_week,start_time,end_time) VALUES ($1,$2,$3,$4) RETURNING id", [b.dentistId, b.day, b.start, b.end]);
     return { schedule: result.rows[0] };
   });
+  endpoint("put", "/schedules/weekly", async (db,clinic,{body:b={}})=>{
+    const time=/^(?:[01]\d|2[0-3]):[0-5]\d$/;
+    if(!uuid.test(b.dentistId||"")||!Array.isArray(b.hours)||b.hours.length>42) throw fail("Choose a dentist and valid weekly hours.");
+    const dentist=await db.query("SELECT id FROM dentists WHERE id=$1 AND clinic_id=$2 AND is_active=TRUE",[b.dentistId,clinic.id]);
+    if(!dentist.rows.length) throw fail("Choose an active dentist in your clinic.");
+    for(const h of b.hours) if(!h||!Number.isInteger(h.day)||h.day<0||h.day>6||typeof h.start!=="string"||typeof h.end!=="string"||!time.test(h.start)||!time.test(h.end)||h.start>=h.end) throw fail("Each working day needs a start time and a later end time.");
+    for(let i=0;i<b.hours.length;i++)for(let j=0;j<i;j++)if(b.hours[i].day===b.hours[j].day&&b.hours[i].start<b.hours[j].end&&b.hours[i].end>b.hours[j].start) throw fail("Working hours overlap. Check the times for each day.",409);
+    await db.query("DELETE FROM dentist_schedules WHERE dentist_id=$1",[b.dentistId]);
+    for(const h of b.hours) await db.query("INSERT INTO dentist_schedules(dentist_id,day_of_week,start_time,end_time) VALUES($1,$2,$3,$4)",[b.dentistId,h.day,h.start,h.end]);
+    return {saved:true};
+  });
   endpoint("delete", "/schedules/:id", async (db, clinic, req) => {
     const result = await db.query("DELETE FROM dentist_schedules ds USING dentists d WHERE ds.id=$1 AND d.id=ds.dentist_id AND d.clinic_id=$2 RETURNING ds.id", [req.params.id, clinic.id]);
     if (!result.rows.length) throw fail("Schedule not found in your clinic.", 404);

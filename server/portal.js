@@ -39,7 +39,7 @@ function restrictPortal(req, res, next) {
       (req.method === "POST" && path === "/workspaces/patient/appointments"))) ||
     (clinic && ((read && ["/workspaces/clinic", "/workspaces/clinic/options"].includes(path)) ||
       (read && ["/workspaces/clinic/manage", "/workspaces/clinic/manage/appointments"].includes(path)) ||
-      (req.method === "PUT" && ["/workspaces/clinic/manage/profile","/workspaces/clinic/manage/deposit-policy"].includes(path)) ||
+      (req.method === "PUT" && ["/workspaces/clinic/manage/profile","/workspaces/clinic/manage/deposit-policy","/workspaces/clinic/manage/schedules/weekly"].includes(path)) ||
       (req.method === "POST" && /^\/workspaces\/clinic\/manage\/(services|dentists|schedules)$/.test(path)) ||
       (req.method === "PUT" && /^\/workspaces\/clinic\/manage\/(services|dentists)\/[^/]+$/.test(path)) ||
       (req.method === "PUT" && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/review$/.test(path)) ||

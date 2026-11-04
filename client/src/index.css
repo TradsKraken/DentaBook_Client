@@ -2824,3 +2824,80 @@ td small {
 .payment-option { margin-top:24px; padding-top:20px; border-top:1px solid #dce5f0; }
 .payment-option form { display:grid; gap:16px; }
 .clinic-status-needs_review { color:#8b5c13; background:#fff6df; }
+
+/* Weekly hours setup starts with stacked phone controls. */
+.hours-quick-setup {
+  background: #f3f9fc;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 16px 0;
+}
+.working-day-picker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  margin: 16px 0;
+}
+.working-day-picker > label,
+.working-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.working-day-picker > label {
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+.working-times {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.working-times .field {
+  margin: 10px 0;
+}
+.working-week {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+.working-day {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  min-width: 0;
+}
+.working-day-summary {
+  margin: 4px 0 8px;
+  color: #456578;
+}
+.working-period {
+  padding: 8px 0 16px;
+  border-top: 1px solid var(--line);
+  margin-bottom: 12px;
+}
+@media (min-width: 390px) {
+  .working-day-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+  .working-times {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .working-day-picker {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.weekly-hours-fields { min-width:0; border:0; padding:0; }
+.weekly-hours-editor .hours-form { border-top:1px solid var(--line); margin:16px 0; padding:16px 0; }
+.weekly-hours-editor summary { min-height:44px; cursor:pointer; padding:12px 0; font-weight:600; }
+.weekly-hours-editor input,.weekly-hours-editor select { font-size:16px; min-width:0; max-width:100%; }
+.weekly-hours-editor .hours-form > button { margin-top:16px; }

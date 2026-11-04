@@ -1,5 +1,9 @@
 # Website updates
 
+## 4 November 2026 — Easier working-hours setup (source release)
+
+Clinic staff can choose weekdays or individual days, enter opening and closing times once, optionally add a lunch break, and apply the result to the week. Each day shows readable AM/PM hours or Day off, with individual edits and reversible day-off switches. A complete dentist week saves in one transaction; invalid or overlapping times leave the saved week intact. The task navigation, service assignments, booking rules, GCash review and Pay at clinic features are preserved. This source update does not by itself deploy production.
+
 ## 3 November 2026 — GCash deposits and Pay at clinic (development preview)
 
 Each approved clinic can enable its own GCash account and Pay at clinic, set its deposit percentage, and write cancellation/refund terms. After acceptance, patients choose a method. GCash uses the server-calculated deposit, saves the agreed terms and recipient, and lets patients submit a transaction reference. Staff must check their actual GCash account and match the received amount and reference before recording payment. Verification confirms an eligible future accepted visit and creates an account-scoped deposit receipt. Pay at clinic requires staff confirmation and remains unpaid, with no receipt. Retried submissions are protected, verified GCash references cannot be reused, and payment reviews record the staff member, time, and note. Existing records are preserved; no clinic is automatically enrolled and no gateway or automatic refund is supplied. Available in the development preview and source; production is unchanged.

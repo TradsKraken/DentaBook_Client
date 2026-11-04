@@ -1,6 +1,6 @@
 # Status and development plan
 
-**Snapshot: 3 November 2026.** Clinic setup, booking/request review, direct GCash verification, and Pay at clinic confirmation are implemented in the supplied source and development preview. Production has not received these increments. Public discovery, accounts, and administrator clinic review remain the previously delivered foundation.
+**Snapshot: 4 November 2026.** Clinic setup, booking/request review, direct GCash verification, and Pay at clinic confirmation are implemented in the supplied source and development preview. Production has not received these increments. Public discovery, accounts, and administrator clinic review remain the previously delivered foundation.
 
 ## Development preview
 
@@ -19,7 +19,7 @@ No browser-only appointments, invented clinics, or simulated payments are suppli
 
 ## Clinic workspace usability
 
-The development preview has dedicated navigation for overview, appointments, services/prices, dentists, working hours, and clinic profile. The desktop sidebar becomes a compact menu on phones. Lists offer search/status filters; add/edit and request review use focused panels. Working hours are grouped by day and filterable by dentist. The overview’s setup checklist uses saved services, published dentists, valid assignments, and working hours that fit an assigned treatment. No invented activity, revenue, trends, patients, or appointments appear.
+The development preview has dedicated navigation for overview, appointments, services/prices, dentists, working hours, and clinic profile. The desktop sidebar becomes a compact menu on phones. Lists offer search/status filters; add/edit and request review use focused panels. Working hours are grouped by day and filterable by dentist. The weekly editor applies opening/closing times across selected days, includes optional lunch breaks, shows AM/PM summaries, and supports individual day edits and day-off switches. A complete dentist week saves atomically. The overview’s setup checklist uses saved services, published dentists, valid assignments, and working hours that fit an assigned treatment. No invented activity, revenue, trends, patients, or appointments appear.
 
 ## Booking rules
 

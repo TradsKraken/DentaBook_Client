@@ -1,6 +1,16 @@
 # Delivery verification
 
-Latest application verification: **3 November 2026**. Clinic setup, booking/request review, GCash verification, and unpaid Pay at clinic confirmation are development-preview features; production was not updated. Earlier delivery checks below remain historical records.
+Latest application verification: **4 November 2026**. Clinic setup, booking/request review, GCash verification, and unpaid Pay at clinic confirmation are development-preview features; production was not updated. Earlier delivery checks below remain historical records.
+
+## Simplified weekly hours — 4 November 2026
+
+- Full backend suite: 70 passed; three existing native-only concurrency checks skipped in the PGlite run.
+- Five clinic interface journeys passed, including the revised editor at 320, 390, 768 and 1440px, readable controls, touch targets and page containment.
+- Weekly saves validate all time periods before replacing schedules in one transaction. Backend checks cover invalid days, overlapping periods, patient/foreign-clinic denial and unchanged saved hours after a rejected request.
+- The production client build passed. Existing booking, task navigation, treatment assignments and payment source were retained from the prior client release.
+- The real PostgreSQL browser journey passed with weekly setup and lunch breaks, patient booking, clinic acceptance/decline and saved patient outcomes. No production records were created.
+- The updated HTML handbook passed layout checks at 320/390/768/1440px and its PDF was refreshed.
+- Production deployment is a separate step and is not claimed by these source verification results.
 
 ## GCash and Pay at clinic — 3 November 2026
 

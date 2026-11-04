@@ -106,6 +106,21 @@ test("clinic setup persists real data and enforces clinic and portal boundaries"
       await request(base + `/dentists/${dentistId}`, { method: "PUT", body: { ...dentist, isActive: false } });
       assert.equal((await request(base + "/schedules", { method: "POST", body: { ...body, day: 2 } })).status, 400);
     });
+    await t.test("weekly replacement saves a complete week atomically and enforces ownership",async()=>{
+      await request(base+`/dentists/${dentistId}`,{method:"PUT",body:dentist});
+      const hours=[1,2,3,4,5].flatMap(day=>[{day,start:"09:00",end:"12:00"},{day,start:"13:00",end:"17:00"}]);
+      const route=base+"/schedules/weekly",body={dentistId,hours};
+      assert.equal((await request(route,{method:"PUT",body,cookie:patient.cookie})).status,403);
+      assert.equal((await request(route,{method:"PUT",body,cookie:other.cookie})).status,400);
+      assert.equal((await request(route,{method:"PUT",body})).status,200);
+      assert.equal((await request(base)).data.schedules.length,10);
+      assert.equal((await request(route,{method:"PUT",body:{dentistId,hours:[...hours,{day:1,start:"11:00",end:"14:00"}]}})).status,409);
+      assert.equal((await request(base)).data.schedules.length,10);
+      assert.equal((await request(route,{method:"PUT",body:{dentistId,hours:[{day:7,start:"09:00",end:"12:00"}]}})).status,400);
+      assert.equal((await request(base)).data.schedules.length,10);
+      assert.equal((await request(route,{method:"PUT",body:{dentistId,hours:[]}})).status,200);
+      assert.equal((await request(base)).data.schedules.length,0);
+    });
     await t.test("suspension blocks existing sessions and owner writes, then expired sessions lose access", async () => {
       for (const status of ["pending_review", "rejected", "suspended"]) {
         await db.query("UPDATE clinics SET status=$1 WHERE id=$2", [status, clinicId]);
