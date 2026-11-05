@@ -1,3 +1,4 @@
+import { ChangePolicySummary } from "../components/AppointmentChanges";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CalendarDays, CheckCircle2 } from "lucide-react";
@@ -19,7 +20,7 @@ export default function Booking() {
   const directory = useClinics();
   const params = new URLSearchParams(useLocation().search);
   const [selection, setSelection] = useState({ clinicId: params.get("clinic") || "", serviceId: "", dentistId: "", date: "", time: "" });
-  const [contact, setContact] = useState({ phone: "", notes: "" });
+  const [contact, setContact] = useState({ email: session.user.email || "", phone: "", notes: "" });
   const [key, setKey] = useState(requestKey);
   const [options, setOptions] = useState({ loading: false, error: "", data: null });
   const [times, setTimes] = useState({ loading: false, error: "", slots: [], service: null });
@@ -81,7 +82,7 @@ export default function Booking() {
     setBusy(true); setError("");
     try {
       const data = await api("/workspaces/patient/appointments", { method: "POST", body: {
-        ...selection, ...contact, requestKey: key, expectedPrice: String(times.service.price), expectedDuration: times.service.duration,
+        ...selection, ...contact, requestKey: key, changePolicyHash: options.data?.changePolicyHash, expectedPrice: String(times.service.price), expectedDuration: times.service.duration,
       } });
       setReceipt(data.appointment);
     } catch (error) {
@@ -101,7 +102,6 @@ export default function Booking() {
     <Link className="button" to="/patient/appointments">View my appointments</Link>
   </section></div>;
   const data = options.data;
-  const accountEmail = data ? data.patient?.email || "" : session.user.email || "";
   const service = times.service || data?.services.find(item => item.id === serviceId);
   const dentists = data?.dentists.filter(item => item.serviceIds.includes(serviceId)) || [];
   const availableServices = data?.services.filter(item => data.dentists.some(dentist => dentist.serviceIds.includes(item.id))) || [];
@@ -115,6 +115,7 @@ export default function Booking() {
             <label className="field">Clinic<select aria-label="Clinic" value={clinicId} onChange={event => select("clinicId", event.target.value)} required>
               <option value="">Choose a clinic</option>{directory.clinics.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}
             </select></label>
+            <button type="button" className="button secondary" disabled={!clinicId || options.loading} onClick={() => { setOptionsAttempt(value => value + 1); setKey(requestKey()); setError(""); }}>Refresh clinic booking options</button>
             {clinicId && !directory.clinics.some(item => item.id === clinicId) && <p className="notice">The selected clinic is unavailable. Choose another clinic.</p>}
             {options.loading ? <p role="status">Loading booking options…</p> : options.error ? <div role="alert"><p>{options.error}</p><button type="button" className="button secondary" onClick={() => setOptionsAttempt(value => value + 1)}>Reload booking options</button></div> : data && <>
               <p className="muted">{data.clinic.address}</p>
@@ -142,16 +143,16 @@ export default function Booking() {
           <section className="panel booking-summary">
             <h2>Your details and estimate</h2>
             <p>Booking for {session.user.name}</p>
-            <label className="field">Contact email<input type="email" autoComplete="email" value={accountEmail} readOnly aria-describedby="booking-email-help" /></label>
-            <p className="summary-note" id="booking-email-help">Your booking uses the email address from your signed-in patient account.</p>
-            {!accountEmail && <p className="notice" role="status">This account has no email address. Sign out and use a patient account registered with an email address to book.</p>}
+            <label className="field">Contact email<input type="email" autoComplete="email" value={contact.email} required maxLength={254} aria-describedby="booking-email-help" onChange={event => { setContact(previous => ({ ...previous, email: event.target.value })); setKey(requestKey()); }} /></label>
+            <p className="summary-note" id="booking-email-help">Enter the email address the clinic should use for this appointment. Changing it here does not change your account email.</p>
             <label className="field">Contact phone<input type="tel" autoComplete="tel" value={contact.phone} maxLength={30} required onChange={event => { setContact(previous => ({ ...previous, phone: event.target.value })); setKey(requestKey()); }} /></label>
             <label className="field">Visit notes (optional)<textarea aria-label="Visit notes (optional)" rows={4} maxLength={2000} value={contact.notes} onChange={event => { setContact(previous => ({ ...previous, notes: event.target.value })); setKey(requestKey()); }} /></label>
             <p className="summary-note">Your contact details and notes are shared with this clinic for your visit.</p>
             {service ? <p className="notice">Estimated treatment cost: {money(service.price)} · {service.duration} minutes</p> : <p className="muted">Choose a treatment to see its estimated cost.</p>}
             <p className="summary-note">Final treatment and cost depend on the clinic’s assessment. This request does not collect payment or confirm a visit.</p>
+            <ChangePolicySummary policy={data?.changePolicy} />
             {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="button full" disabled={busy || times.loading || !selection.time || !data || !accountEmail || !!options.error} aria-busy={busy}>{busy ? "Sending request…" : "Send appointment request"}</button>
+            <button className="button full" disabled={busy || times.loading || !selection.time || !data || !contact.email.trim() || !!options.error} aria-busy={busy}>{busy ? "Sending request…" : "Send appointment request"}</button>
             <Link className="text-link" to="/patient/appointments">View my saved requests</Link>
           </section>
         </div>

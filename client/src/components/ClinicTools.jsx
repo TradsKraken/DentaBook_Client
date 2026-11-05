@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, Building2, CalendarDays, CheckCircle2, ChevronDown, CreditCard, ClipboardList, Clock3, ExternalLink, LayoutDashboard, MapPin, Menu, Pencil, Plus, RefreshCw, Search, Stethoscope, Tags, UsersRound } from "lucide-react";
-import WeeklyHours from "./WeeklyHours";
+import ClinicChangePolicy from "./ClinicChangePolicy";
 import ClinicInbox from "./ClinicInbox";
 import ClinicPayments from "./ClinicPayments";
+import ClinicStaff from './ClinicStaff';
+import ClinicIntakeSettings from './ClinicIntakeSettings';
+import WorkingHoursEditor from './WorkingHoursEditor';
 import { ClinicDrawer, ClinicEmpty, ClinicStatus } from "./ClinicUi";
 import { api } from "../api";
 
@@ -15,10 +18,13 @@ const sections = [
   { id: "overview", label: "Overview", icon: LayoutDashboard, description: "A clear view of your clinic and what needs attention." },
   { id: "appointments", label: "Appointment inbox", title: "Appointments", icon: CalendarDays, description: "Review patient requests and keep your clinic’s visits organized." },
   { id: "payments", label: "Deposits & payments", icon: CreditCard, description: "Set deposit terms and review verified payment records." },
+  { id: "policies", label: "Appointment policies", icon: ClipboardList, description: "Set patient cancellation and rescheduling rules." },
   { id: "services", label: "Services & prices", icon: Tags, description: "Manage your treatments, estimated prices, and appointment durations." },
   { id: "dentists", label: "Dentists", icon: Stethoscope, description: "Manage your team’s profiles and the treatments each dentist provides." },
   { id: "schedules", label: "Working hours", icon: Clock3, description: "Set the weekly hours patients can request with your dentists." },
   { id: "profile", label: "Clinic profile", icon: Building2, description: "Keep the details on your public clinic listing up to date." },
+  { id: 'intake', label: 'Patient intake', icon: ClipboardList, description: 'Configure your clinic’s private intake questions and information policy.' },
+  { id: 'staff', label: 'Staff access', icon: UsersRound, description: 'Invite your team and control their clinic access.' },
 ];
 function Input({ label, multiline, ...props }) {
   return <label className="field">{label}{multiline ? <textarea aria-label={label} rows={3} {...props} /> : <input {...props} />}</label>;
@@ -128,32 +134,16 @@ function Catalog({ type, data, request, saved, services, assignments }) {
     </ClinicDrawer>}
   </section>;
 }
-function ScheduleEditor({ dentists, schedules, request, saved, cancel, onBusyChange }) {
-  const [dentistId,setDentistId]=useState(dentists.length===1?dentists[0].id:"");
-  const [busy,setBusy]=useState(false), [error,setError]=useState("");
-  const selected=dentists.find(item=>item.id===dentistId);
-  async function saveWeek(path,body) {
-    setBusy(true);onBusyChange?.(true);setError("");
-    try { await request("/schedules/weekly","PUT",{dentistId,hours:body.hours});saved("Working hours saved.");return true; }
-    catch(error) {setError(error.message);return false;}
-    finally {setBusy(false);onBusyChange?.(false);}
-  }
-  return <div className="clinic-editor weekly-hours-editor"><fieldset disabled={busy} className="weekly-hours-fields">
-    <label className="field">Dentist<select aria-label="Dentist" value={dentistId} onChange={event=>{setDentistId(event.target.value);setError("");}}><option value="">Choose a dentist</option>{dentists.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-    {error&&<p className="form-error" role="alert">{error}</p>}
-    {selected?<WeeklyHours key={dentistId} dentist={{id:dentistId,full_name:selected.name,service_ids:[],hours:schedules.filter(item=>item.dentistId===dentistId).map(({day,start,end})=>({day,start,end}))}} timezone="Asia/Manila" save={saveWeek}/>:<p>Choose the dentist whose working week you want to set.</p>}
-    <button className="button secondary" type="button" onClick={cancel}>Cancel editing</button>
-  </fieldset></div>;
-}
 function Schedules({ data, request, saved, navigate }) {
   const [adding, setAdding] = useState(false), [busy, setBusy] = useState(false), [removing, setRemoving] = useState(""), [error, setError] = useState("");
   const [dentistId, setDentistId] = useState("");
+  const [editing,setEditing]=useState(null);
   const active = data.dentists.filter(item => item.isActive);
   const shown = data.schedules.filter(item => !dentistId || item.dentistId === dentistId);
   return <section className="clinic-surface">
     <div className="clinic-toolbar"><div className="clinic-toolbar-copy"><h2>Weekly schedule</h2><p>Recurring hours · Philippine time</p></div>
       <select className="clinic-schedule-filter" aria-label="Filter schedules by dentist" value={dentistId} onChange={event => setDentistId(event.target.value)}><option value="">All dentists</option>{data.dentists.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
-      <button className="button" disabled={!active.length} onClick={() => setAdding(true)}><Plus size={17} />Set working hours</button>
+      <button className="button" disabled={!active.length} onClick={() => setAdding(true)}><Plus size={17} />Add working hours</button>
     </div>
     {error && <p className="clinic-feedback error" role="alert">{error}</p>}
     {!active.length ? <ClinicEmpty icon={Stethoscope} title="Add a published dentist first" action={<button className="button secondary" onClick={() => navigate("dentists")}>Manage dentists</button>}>Publish a dentist profile before setting working hours.</ClinicEmpty> : !shown.length ? <ClinicEmpty icon={Clock3} title="No working hours saved yet.">Add your dentist’s recurring hours to make appointment times available.</ClinicEmpty> : <div className="clinic-week">
@@ -163,6 +153,7 @@ function Schedules({ data, request, saved, navigate }) {
         return <section className="clinic-week-day" key={day}><h3>{day}<small>{shifts.length} {shifts.length === 1 ? "shift" : "shifts"}</small></h3><div>{shifts.map(item => {
           const dentist = data.dentists.find(person => person.id === item.dentistId);
           return <article className="clinic-shift" key={item.id}><span className="clinic-shift-icon"><Clock3 size={18} /></span><div><h4>{dentist?.name || "Dentist unavailable"}{dentist && !dentist.isActive ? " (hidden)" : ""}</h4><p>{day} · {item.start}–{item.end}</p></div>
+            <button className="clinic-row-button" disabled={!!removing || !dentist?.isActive} aria-label={`Edit ${day} ${item.start} schedule for ${dentist?.name || 'dentist'}`} onClick={()=>setEditing(item)}><Pencil size={15} />Edit hours</button>
             <button className="clinic-row-button" disabled={!!removing} aria-busy={removing === item.id} aria-label={`Remove ${day} ${item.start} schedule for ${dentist?.name || "dentist"}`} onClick={async () => {
               setRemoving(item.id); setError("");
               try { await request(`/schedules/${item.id}`, "DELETE"); saved("Working hours removed. Existing appointments have not changed."); }
@@ -174,7 +165,7 @@ function Schedules({ data, request, saved, navigate }) {
       })}
     </div>}
     <div className="clinic-surface-note"><CheckCircle2 size={16} /><p>Hours control new requests. Existing appointments keep their saved visit times when you change this schedule.</p></div>
-    {adding && <ClinicDrawer title="Set working hours" busy={busy} onClose={() => setAdding(false)}><ScheduleEditor dentists={active} schedules={data.schedules} request={request} onBusyChange={setBusy} saved={message => { setAdding(false); saved(message); }} cancel={() => setAdding(false)} /></ClinicDrawer>}
+    {(adding || editing) && <ClinicDrawer title={editing ? 'Edit working hours' : 'Add working hours'} busy={busy} onClose={()=>{setAdding(false);setEditing(null);}}><WorkingHoursEditor dentists={active} schedules={data.schedules} initialDentistId={dentistId} item={editing} request={request} onBusyChange={setBusy} saved={message=>{setAdding(false);setEditing(null);saved(message);}} cancel={()=>{setAdding(false);setEditing(null);}} /></ClinicDrawer>}
   </section>;
 }
 function Overview({ data, counts, navigate }) {
@@ -210,10 +201,12 @@ function Overview({ data, counts, navigate }) {
 }
 export function ClinicTools({ clinicId, owner, clinic, counts, user, clinicPicker, signOut, onUpdated }) {
   const [params, setParams] = useSearchParams();
-  const section = sections.find(item => item.id === params.get("section")) || sections[0];
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [data, setData] = useState(null), [loading, setLoading] = useState(true), [error, setError] = useState(""), [notice, setNotice] = useState("");
   const [attempt, setAttempt] = useState(0), [version, setVersion] = useState(0);
+  const staffRole=data?.clinic.staffRole || clinic.staffRole || 'owner';
+  const allowedSections=sections.filter(item=>staffRole==='appointments' ? ['appointments','schedules'].includes(item.id) : item.id!=='staff' || staffRole==='owner');
+  const section=allowedSections.find(item=>item.id===params.get('section')) || allowedSections[0];
   const heading = useRef(null);
   const base = "/workspaces/clinic/manage", query = owner ? `?clinicId=${encodeURIComponent(clinicId)}` : "";
   useEffect(() => {
@@ -235,7 +228,7 @@ export function ClinicTools({ clinicId, owner, clinic, counts, user, clinicPicke
       <div className="clinic-sidebar-identity"><span className="clinic-avatar clinic-avatar-clinic" aria-hidden="true"><Building2 size={23} /></span><div><h2>{current.name}</h2><span className="clinic-sidebar-status"><i />Approved clinic</span></div></div>
       {clinicPicker}
       <button className="clinic-mobile-menu" aria-label={navigationOpen ? "Close clinic navigation" : "Open clinic navigation"} aria-expanded={navigationOpen} aria-controls="clinic-navigation" onClick={() => setNavigationOpen(value => !value)}><Menu size={19} /><span>{section.label}</span><ChevronDown size={17} /></button>
-      <nav id="clinic-navigation" className="clinic-navigation" aria-label="Clinic workspace"><p className="clinic-nav-caption">WORKSPACE</p>{sections.map(({ id, label, icon: Icon }, index) => <div key={id}>{index === 3 && <p className="clinic-nav-caption">CLINIC SETUP</p>}<button className={`clinic-nav-link ${section.id === id ? "is-active" : ""}`} aria-current={section.id === id ? "page" : undefined} aria-label={label} onClick={() => navigate(id)}><Icon size={19} /><span>{id === "appointments" ? "Appointments" : label}</span>{id === "appointments" && pending > 0 && <b aria-hidden="true">{pending}</b>}</button></div>)}</nav>
+      <nav id="clinic-navigation" className="clinic-navigation" aria-label="Clinic workspace"><p className="clinic-nav-caption">WORKSPACE</p>{allowedSections.map(({ id, label, icon: Icon }, index) => <div key={id}>{index === 3 && <p className="clinic-nav-caption">CLINIC SETUP</p>}<button className={`clinic-nav-link ${section.id === id ? "is-active" : ""}`} aria-current={section.id === id ? "page" : undefined} aria-label={label} onClick={() => navigate(id)}><Icon size={19} /><span>{id === "appointments" ? "Appointments" : label}</span>{id === "appointments" && pending > 0 && <b aria-hidden="true">{pending}</b>}</button></div>)}</nav>
       <div className="clinic-sidebar-footer"><div className="clinic-account"><span className="clinic-avatar" aria-hidden="true">{initials(user.name)}</span><div><strong>{user.name}</strong><small>{owner ? "Owner access" : "Clinic staff"}</small></div></div>{signOut}</div>
     </aside>
     <div className="clinic-content"><header className="clinic-page-header"><div><p className="clinic-breadcrumb">Clinic workspace <span>/</span> {section.title || section.label}</p><h1 ref={heading} tabIndex={-1}>{section.title || section.label}</h1><p>{section.description}</p></div><div className="clinic-header-actions">
@@ -246,7 +239,10 @@ export function ClinicTools({ clinicId, owner, clinic, counts, user, clinicPicke
       {loading && !data ? <div className="clinic-surface clinic-loading" role="status">Loading your clinic workspace…</div> : error ? <div className="clinic-surface clinic-loading" role="alert"><h2>We couldn’t load this workspace.</h2><p>{error}</p><button className="button secondary" onClick={() => setAttempt(value => value + 1)}>Reload clinic tools</button></div> : data && <>
         {section.id === "overview" && <Overview data={data} counts={counts} navigate={navigate} />}
         {section.id === "payments" && data.clinic.id === clinicId && <ClinicPayments key={`${clinicId}:${version}`} data={data} request={request} saved={saved} receiptBase={id => `${base}/payments/${id}/receipt${query}`} />}
+        {section.id === "policies" && <ClinicChangePolicy key={`${clinicId}:${version}`} clinic={data.clinic} request={request} saved={saved} />}
         {section.id === "profile" && <Profile key={version} clinic={data.clinic} request={request} saved={saved} />}
+        {section.id === 'staff' && <ClinicStaff key={clinicId} request={request} />}
+        {section.id === 'intake' && <ClinicIntakeSettings key={clinicId} request={request} services={data.services} />}
         {(section.id === "services" || section.id === "dentists") && <Catalog key={section.id} type={section.id} data={data[section.id]} services={data.services} assignments={data.assignments || []} request={request} saved={saved} />}
         {section.id === "schedules" && <Schedules data={data} request={request} saved={saved} navigate={navigate} />}
         {section.id === "appointments" && <ClinicInbox request={request} onReviewed={pendingAppointments => { setData(previous => ({ ...previous, pendingAppointments })); onUpdated({ ...data, pendingAppointments }); }} />}

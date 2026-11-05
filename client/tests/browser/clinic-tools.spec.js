@@ -13,22 +13,29 @@ async function fixture(page) {
     if (path === "/api/workspaces/clinic") return respond({ clinic: state.clinic, counts: { services: state.services.filter(item => item.isActive).length, dentists: state.dentists.filter(item => item.isActive).length, pendingAppointments: pending() } });
     if (path === "/api/workspaces/clinic/manage/appointments") return respond({ appointments: state.appointments.filter(item => url.searchParams.get("status") === "all" || item.status === url.searchParams.get("status")), pendingAppointments: pending() });
     if (path === "/api/workspaces/clinic/manage") return state.failRead ? respond({ error: "Clinic tools could not be loaded." }, 503) : respond({ ...state, pendingAppointments: pending() });
+    if (/\/appointments\/[^/]+\/changes$/.test(path) && request.method() === "GET") {
+      const appointment=state.appointments.find(item=>path.includes(item.id));
+      return respond({appointment,policy:{cancelEnabled:false,rescheduleEnabled:false,terms:null},policyHash:"fixture-policy",changes:[],canCancel:false,canReschedule:false,canStaffCancel:true,unavailableReason:"Patient appointment changes are not enabled."});
+    }
+    if (/\/appointments\/[^/]+\/intake$/.test(path) && request.method()==='GET') return respond({template:null,submissions:[],followups:[],canRespond:true});
     if (path.startsWith("/api/workspaces/clinic/manage")) {
       if (state.failSave) return respond({ error: "Unable to save. Please try again." }, 503);
       const body = request.postDataJSON();
       state.writes.push({ method: request.method(), path, body, header: request.headers()["x-dentabook-request"] });
+      if (path.endsWith('/schedules/bulk')) {
+        let added=0;
+        for(const dentistId of body.dentistIds) for(const day of body.days) for(const shift of body.shifts) {state.schedules.push({id:`schedules-${state.schedules.length+1}`,dentistId,day,...shift});added++;}
+        return respond({added,skipped:0},201);
+      }
       if (path.endsWith("/profile")) { state.clinic = { ...state.clinic, ...body }; return respond({ saved: true }); }
       if (path.endsWith("/review")) {
         const record = state.appointments.find(item => path.includes(item.id));
         record.status = body.decision; record.reviewNotes = body.notes;
         return respond({ appointment: record, pendingAppointments: pending() });
       }
-      if (path.endsWith("/schedules/weekly")) {
-        state.schedules = [...state.schedules.filter(item=>item.dentistId!==body.dentistId), ...body.hours.map((h,index)=>({...h,dentistId:body.dentistId,id:`weekly-${index}`}))];
-        return respond({saved:true});
-      }
       const [, resource, id] = path.match(/\/manage\/(services|dentists|schedules)(?:\/([^/]+))?$/) || [];
       if (request.method() === "DELETE") { state[resource] = state[resource].filter(item => item.id !== id); return respond({ removed: true }); }
+      if (!resource) return respond({error:"Unexpected fixture route"},404);
       const item = { ...body, id: id || `${resource}-${state[resource].length + 1}` };
       if (id) state[resource] = state[resource].map(previous => previous.id === id ? item : previous); else state[resource].push(item);
       if (resource === "dentists") state.assignments = [...state.assignments.filter(assignment => assignment.dentistId !== item.id), ...(body.serviceIds || []).map(serviceId => ({ dentistId: item.id, serviceId }))];
@@ -79,21 +86,19 @@ test("staff maintain their profile, services, dentists, and hours through the cl
   expect(state.services[0].isActive).toBe(false);
   await addDentist(page);
   await clinicSection(page, "Working hours");
-  await page.getByRole("button", { name: "Set working hours", exact: true }).click();
-  await page.getByLabel("Dentist", { exact: true }).selectOption("dentists-1");
-  await page.getByRole("button",{name:"Monday–Friday",exact:true}).click();
-  await page.getByLabel("Opening time",{exact:true}).fill("09:00");
-  await page.getByLabel("Closing time",{exact:true}).fill("12:00");
-  await page.getByRole("button",{name:"Apply hours to selected days",exact:true}).click();
+  await page.getByRole("button", { name: "Add working hours", exact: true }).click();
+  await page.getByRole('dialog').getByLabel('Test Dentist',{exact:true}).check();
+  await page.getByRole('dialog').getByLabel('Monday',{exact:true}).check();
+  await page.getByLabel("Start time", { exact: true }).fill("09:00");
+  await page.getByLabel("End time", { exact: true }).fill("12:00");
   await page.getByRole("button", { name: "Save working hours", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByText("Monday · 09:00–12:00", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.locator(".clinic-page-header h1")).toHaveText("Working hours");
   await page.getByRole("button", { name: "Remove Monday 09:00 schedule for Test Dentist", exact: true }).click();
-  await expect(page.getByText("Monday · 09:00–12:00", {exact:true})).toHaveCount(0);
-  await expect(page.getByText("Tuesday · 09:00–12:00", {exact:true})).toBeVisible();
-  expect(state.schedules).toHaveLength(4); expect(state.writes.every(write => write.header === "1")).toBe(true);
+  await expect(page.getByText("No working hours saved yet.", { exact: true })).toBeVisible();
+  expect(state.schedules).toHaveLength(0); expect(state.writes.every(write => write.header === "1")).toBe(true);
   await clinicSection(page, "Dentists");
   await page.getByRole("button", { name: "Edit Test Dentist", exact: true }).click();
   await page.getByLabel("Publish this dentist on the clinic profile", { exact: false }).uncheck();
@@ -102,6 +107,15 @@ test("staff maintain their profile, services, dentists, and hours through the cl
   await expect(page.locator(".clinic-table .clinic-status").filter({ hasText: /^Hidden$/ })).toBeVisible();
   await clinicSection(page, "Working hours");
   await expect(page.getByRole("heading", { name: "Add a published dentist first" })).toBeVisible();
+});
+test('adding hours from a hidden-dentist filter only selects published dentists',async({page})=>{
+  const state=await fixture(page);
+  state.dentists=[{id:'hidden-dentist',name:'Hidden Test Dentist',title:'Test title',isActive:false},{id:'active-dentist',name:'Active Test Dentist',title:'Test title',isActive:true}];
+  await open(page);await clinicSection(page,'Working hours');
+  await page.getByLabel('Filter schedules by dentist',{exact:true}).selectOption('hidden-dentist');
+  await page.getByRole('button',{name:'Add working hours',exact:true}).click();
+  await expect(page.getByRole('dialog').getByLabel('Active Test Dentist',{exact:true})).toBeChecked();
+  await expect(page.getByRole('dialog').getByLabel('Hidden Test Dentist',{exact:true})).toHaveCount(0);
 });
 test("clinic forms retain failed saves and panels support cancellation with Escape", async ({ page }) => {
   const state = await fixture(page); await open(page); await clinicSection(page, "Clinic profile");
@@ -176,12 +190,6 @@ test("clinic workspace, data lists, schedules, and editor panels fit required sc
       await clinicSection(page, label); await check(`${label} at ${width}`);
       if (width === 390 || width === 1440) await page.screenshot({ path: testInfo.outputPath(`workspace-${label.replaceAll(/[^a-z]/gi,"-")}-${width}.png`), fullPage: true });
     }
-    await clinicSection(page, "Working hours");
-    await page.getByRole("button",{name:"Set working hours",exact:true}).click();
-    await page.getByRole("dialog").locator("summary").filter({hasText:"Set the same hours for several days"}).click();
-    await check(`Weekly hours editor at ${width}`);
-    await page.screenshot({path:testInfo.outputPath(`weekly-hours-${width}.png`),fullPage:false});
-    await page.getByRole("button",{name:"Close panel",exact:true}).click();
     await clinicSection(page, "Services & prices"); await page.getByRole("button", { name: "Add a service", exact: true }).click();
     await check(`Service editor at ${width}`); expect(await page.getByRole("dialog").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     if (width === 390 || width === 1440) await page.screenshot({ path: testInfo.outputPath(`service-editor-${width}.png`), fullPage: false });

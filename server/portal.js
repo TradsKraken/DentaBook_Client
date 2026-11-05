@@ -21,6 +21,21 @@ function restrictPortal(req, res, next) {
     (req.method === "POST" && path === "/auth/logout");
   const patient = portal === "patient" || portal === "public";
   const clinic = portal === "clinic" || portal === "public";
+  const accountTools=patient && req.method==='PUT' && ['/auth/patient/profile','/auth/patient/password'].includes(path);
+  const invitations=clinic && req.method==='POST' && ['/auth/staff-invitation/details','/auth/staff-invitation/accept'].includes(path);
+  const intake=patient && ((read && /^\/workspaces\/patient\/appointments\/[^/]+\/intake$/.test(path)) ||
+    (req.method==='PUT' && /^\/workspaces\/patient\/appointments\/[^/]+\/intake$/.test(path)) ||
+    (req.method==='POST' && /^\/workspaces\/patient\/appointments\/[^/]+\/followups\/[^/]+\/reply$/.test(path)));
+  const clinicTools=clinic && (
+    (['GET','HEAD','PUT'].includes(req.method) && path==='/workspaces/clinic/manage/intake-settings') ||
+    (read && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/intake$/.test(path)) ||
+    (req.method==='POST' && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/followups$/.test(path)) ||
+    (read && path==='/workspaces/clinic/manage/staff') ||
+    (req.method==='POST' && path==='/workspaces/clinic/manage/staff/invitations') ||
+    (req.method==='DELETE' && /^\/workspaces\/clinic\/manage\/staff\/(invitations|members)\/[^/]+$/.test(path)) ||
+    (req.method==='PUT' && /^\/workspaces\/clinic\/manage\/staff\/members\/[^/]+$/.test(path)) ||
+    (req.method==='POST' && path==='/workspaces/clinic/manage/schedules/bulk') ||
+    (req.method==='PUT' && /^\/workspaces\/clinic\/manage\/schedules\/[^/]+$/.test(path)));
   const login = req.method === "POST" && (
     (patient && path === "/auth/patient/login") ||
     (clinic && path === "/auth/clinic/login") ||
@@ -35,18 +50,23 @@ function restrictPortal(req, res, next) {
     (read && /^\/workspaces\/patient\/payments\/[^/]+\/receipt$/.test(path)));
   const clinicPayment = clinic && ((read && (path === "/workspaces/clinic/manage/payments" || /^\/workspaces\/clinic\/manage\/payments\/[^/]+\/receipt$/.test(path))) ||
     (req.method === "POST" && /^\/workspaces\/clinic\/manage\/payments\/[^/]+\/review$/.test(path)));
+  const patientChanges = patient && ((read && /^\/workspaces\/patient\/appointments\/[^/]+\/(changes|reschedule-availability)$/.test(path)) ||
+    (req.method === "POST" && (/^\/workspaces\/patient\/appointments\/[^/]+\/(cancel|reschedule)$/.test(path) || /^\/workspaces\/patient\/appointments\/[^/]+\/changes\/[^/]+\/withdraw$/.test(path))));
+  const clinicChanges = clinic && ((read && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/changes$/.test(path)) ||
+    (req.method === "PUT" && path === "/workspaces/clinic/manage/appointment-policy") ||
+    (req.method === "POST" && (/^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/cancel$/.test(path) || /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/changes\/[^/]+\/review$/.test(path))));
   const workspace = (patient && ((read && ["/workspaces/patient/appointments", "/workspaces/patient/booking-options", "/workspaces/patient/availability"].includes(path)) ||
       (req.method === "POST" && path === "/workspaces/patient/appointments"))) ||
     (clinic && ((read && ["/workspaces/clinic", "/workspaces/clinic/options"].includes(path)) ||
       (read && ["/workspaces/clinic/manage", "/workspaces/clinic/manage/appointments"].includes(path)) ||
-      (req.method === "PUT" && ["/workspaces/clinic/manage/profile","/workspaces/clinic/manage/deposit-policy","/workspaces/clinic/manage/schedules/weekly"].includes(path)) ||
+      (req.method === "PUT" && ["/workspaces/clinic/manage/profile","/workspaces/clinic/manage/deposit-policy"].includes(path)) ||
       (req.method === "POST" && /^\/workspaces\/clinic\/manage\/(services|dentists|schedules)$/.test(path)) ||
       (req.method === "PUT" && /^\/workspaces\/clinic\/manage\/(services|dentists)\/[^/]+$/.test(path)) ||
       (req.method === "PUT" && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/review$/.test(path)) ||
       (req.method === "DELETE" && /^\/workspaces\/clinic\/manage\/schedules\/[^/]+$/.test(path)))) ||
     (portal === "admin" && ((read && path === "/workspaces/admin/clinics") ||
       (req.method === "POST" && /^\/workspaces\/admin\/clinics\/[^/]+\/review$/.test(path))));
-  if (common || login || registration || workspace || patientPayment || clinicPayment) return next();
+  if (common || login || registration || workspace || patientPayment || clinicPayment || patientChanges || clinicChanges || accountTools || invitations || intake || clinicTools) return next();
   return res.status(404).set("Cache-Control", "no-store").json({ error: "API route not found in this portal." });
 }
 module.exports = { configuredPortal, portalAllowsRole, restrictPortal };

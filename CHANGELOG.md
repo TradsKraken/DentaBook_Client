@@ -1,8 +1,23 @@
 # Website updates
 
+## 5 November 2026 — Private intake, staff access, profiles, and easier working hours (live)
+
+Clinics configure required/optional intake questions for all treatments or one service, with a stated purpose/retention policy and explicit patient consent. Authorized staff read private answers, request information, and see the patient's saved response without changing appointment/payment state. Patients edit name/phone and change passwords using the current password; password changes sign out all devices. Owners share private 48-hour single-use invitations for managers and appointment staff, change roles, revoke access immediately, and view access history. Working hours now select multiple dentists/days, support split shifts and batch previews, reject overlaps atomically, retain identical shifts on retry, and allow individual shift edits. This replaces the earlier single-dentist weekly editor in the current release while retaining its historical record below. Existing appointments, quotes, payments, and receipts are preserved.
+
+Released and verified on the live HTTPS portals. Follow-up is available inside signed-in portals; email/SMS delivery, verified account-email changes, dentist-specific sign-in, and MFA remain planned.
+
 ## 4 November 2026 — Easier working-hours setup (source release)
 
 Clinic staff can choose weekdays or individual days, enter opening and closing times once, optionally add a lunch break, and apply the result to the week. Each day shows readable AM/PM hours or Day off, with individual edits and reversible day-off switches. A complete dentist week saves in one transaction; invalid or overlapping times leave the saved week intact. The task navigation, service assignments, booking rules, GCash review and Pay at clinic features are preserved. This source update does not by itself deploy production.
+
+## 3 November 2026 — Clinic setup, booking, and payments released (live)
+
+Patients can request available appointments with an editable contact email and use clinic-enabled GCash or Pay at clinic after acceptance. Clinics manage profiles, treatments, dentists, assignments, working hours, request decisions, and payment verification in the redesigned workspace. Staff verify actual GCash transfers before issuing private deposit receipts; Pay at clinic stays unpaid. These features are now released and verified on both HTTPS portals. Existing clinics are not enrolled in payment methods automatically.
+
+## 3 November 2026 — Cancellation and clinic-approved rescheduling (live)
+
+Clinics set their own enabled patient actions, deadlines, and terms. Patients can cancel eligible visits, request another available time, or withdraw a pending reschedule. The original reservation remains until owning clinic staff approve a replacement after an atomic availability check. Change history records reasons, policies, requester/reviewer, and original/requested times. Original quotes, treatment duration, appointment references, payment records, and issued receipts are preserved. Cancellation flags any financial follow-up without recording a refund. This increment is now released and verified on production; clinics must explicitly enable patient actions.
+
 
 ## 3 November 2026 — GCash deposits and Pay at clinic (development preview)
 

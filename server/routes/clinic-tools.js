@@ -1,9 +1,10 @@
 const express = require("express");
+const changes = require("../appointment-changes");
 const { email, text } = require("../validation");
 const { paymentReceipt } = require("./payments");
 const { scaledInteger, decimal } = require("../payment-money");
 const { validId, offering } = require("../booking");
-const { clinicColumns } = require("./accounts");
+const {clinicAccess,permit}=require('../clinic-access');
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const categories = ["Preventive", "Restorative", "Cosmetic", "Surgical", "Orthodontic", "General"];
 const optionalText = (value, max) => typeof value === "string" && value.trim().length <= max;
@@ -22,11 +23,8 @@ function createClinicToolsRouter(pool,{payments}={}) {
       try {
         client = writing ? await pool.connect() : pool;
         if (writing) await client.query("BEGIN");
-        if (req.user.ownerAccess ? !uuid.test(req.query.clinicId || "") : req.query.clinicId !== undefined)
-          throw fail(req.user.ownerAccess ? "Select a clinic to manage." : "Clinic staff can only access their own clinic.", req.user.ownerAccess ? 400 : 403);
-        const result = await client.query(`SELECT ${clinicColumns} FROM clinics c WHERE ${req.user.ownerAccess ? "c.id" : "c.owner_user_id"} = $1 ORDER BY c.created_at, c.id LIMIT 1${writing ? " FOR UPDATE OF c" : ""}`, [req.user.ownerAccess ? req.query.clinicId : req.user.id]);
-        const clinic = result.rows[0];
-        if (!clinic || clinic.status !== "approved") throw fail("Clinic approval is required to use clinic tools.", 403);
+        const clinic=await clinicAccess(client,req,writing);
+        permit(clinic,path);
         if (req.params.id && !uuid.test(req.params.id)) throw fail("Record not found.", 404);
         const data = await action(client, clinic, req);
         if (writing) await client.query("COMMIT");
@@ -39,6 +37,8 @@ function createClinicToolsRouter(pool,{payments}={}) {
       } finally { if (writing) client?.release(); }
     });
   }
+  require('../staff').registerStaffEndpoints(endpoint);
+  require('../intake').registerIntakeEndpoints(endpoint);
   endpoint("get", "/", async (db, clinic) => {
     const services = await db.query(`SELECT ${serviceColumns} FROM services WHERE clinic_id=$1 ORDER BY name,id`, [clinic.id]);
     const dentists = await db.query(`SELECT ${dentistColumns} FROM dentists WHERE clinic_id=$1 ORDER BY full_name,id`, [clinic.id]);
@@ -70,6 +70,22 @@ function createClinicToolsRouter(pool,{payments}={}) {
       deposit_policy_updated_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE id=$8`,[rate ? decimal(rate) : null,configured ? terms : null,configured,body.gcashEnabled,body.gcashEnabled ? name : null,body.gcashEnabled ? number : null,body.walkInEnabled,clinic.id]);
     return { saved: true };
   });
+  endpoint("put", "/appointment-policy", async (db,clinic,{body:b={}})=>{
+    const validHours=value=>Number.isInteger(value) && value>=0 && value<=2160;
+    if (typeof b.cancelEnabled!=='boolean' || typeof b.rescheduleEnabled!=='boolean'
+      || (b.cancelEnabled && !validHours(b.cancelNoticeHours)) || (b.rescheduleEnabled && !validHours(b.rescheduleNoticeHours))
+      || typeof b.terms!=='string' || b.terms.trim().length>5000 || ((b.cancelEnabled || b.rescheduleEnabled) && !b.terms.trim()))
+      throw fail('Choose enabled actions, whole-hour deadlines from 0 to 2,160 hours, and terms of up to 5,000 characters.');
+    await db.query(`UPDATE clinics SET patient_cancellation_enabled=$1,cancellation_notice_hours=$2,patient_rescheduling_enabled=$3,
+      reschedule_notice_hours=$4,appointment_change_terms=$5,change_policy_version=change_policy_version+1,updated_at=CURRENT_TIMESTAMP WHERE id=$6`,
+      [b.cancelEnabled,b.cancelEnabled ? b.cancelNoticeHours : null,b.rescheduleEnabled,b.rescheduleEnabled ? b.rescheduleNoticeHours : null,b.terms.trim() || null,clinic.id]);
+    return {saved:true};
+  });
+  endpoint("get","/appointments/:id/changes",(db,clinic,req)=>changes.details(db,req.params.id,{clinicId:clinic.id}));
+  endpoint("post","/appointments/:id/cancel",async(db,clinic,req)=>changes.mutate(db,
+    await changes.load(db,req.params.id,{clinicId:clinic.id},true),{id:req.user.id,role:'clinic_staff'},'cancel',req.body || {}),200);
+  endpoint("post","/appointments/:id/changes/:changeId/review",async(db,clinic,req)=>changes.review(db,
+    await changes.load(db,req.params.id,{clinicId:clinic.id},true),req.user.id,req.params.changeId,req.body || {}),200);
   function serviceValues(b) {
     if (!text(b.name, 200) || !categories.includes(b.category) || !optionalText(b.description, 3000) || typeof b.price !== "string" || !/^\d{1,8}(\.\d{1,2})?$/.test(b.price) || !Number.isInteger(b.duration) || b.duration < 5 || b.duration > 480 || typeof b.isActive !== "boolean")
       throw fail("Enter a service name, category, price (0–99,999,999.99), and duration of 5–480 minutes.");
@@ -120,15 +136,36 @@ function createClinicToolsRouter(pool,{payments}={}) {
     const result = await db.query("INSERT INTO dentist_schedules (dentist_id,day_of_week,start_time,end_time) VALUES ($1,$2,$3,$4) RETURNING id", [b.dentistId, b.day, b.start, b.end]);
     return { schedule: result.rows[0] };
   });
-  endpoint("put", "/schedules/weekly", async (db,clinic,{body:b={}})=>{
+  endpoint('post','/schedules/bulk',async(db,clinic,{body:b={}})=>{
     const time=/^(?:[01]\d|2[0-3]):[0-5]\d$/;
-    if(!uuid.test(b.dentistId||"")||!Array.isArray(b.hours)||b.hours.length>42) throw fail("Choose a dentist and valid weekly hours.");
-    const dentist=await db.query("SELECT id FROM dentists WHERE id=$1 AND clinic_id=$2 AND is_active=TRUE",[b.dentistId,clinic.id]);
-    if(!dentist.rows.length) throw fail("Choose an active dentist in your clinic.");
-    for(const h of b.hours) if(!h||!Number.isInteger(h.day)||h.day<0||h.day>6||typeof h.start!=="string"||typeof h.end!=="string"||!time.test(h.start)||!time.test(h.end)||h.start>=h.end) throw fail("Each working day needs a start time and a later end time.");
-    for(let i=0;i<b.hours.length;i++)for(let j=0;j<i;j++)if(b.hours[i].day===b.hours[j].day&&b.hours[i].start<b.hours[j].end&&b.hours[i].end>b.hours[j].start) throw fail("Working hours overlap. Check the times for each day.",409);
-    await db.query("DELETE FROM dentist_schedules WHERE dentist_id=$1",[b.dentistId]);
-    for(const h of b.hours) await db.query("INSERT INTO dentist_schedules(dentist_id,day_of_week,start_time,end_time) VALUES($1,$2,$3,$4)",[b.dentistId,h.day,h.start,h.end]);
+    if (!Array.isArray(b.dentistIds) || !b.dentistIds.length || b.dentistIds.length>50 || !b.dentistIds.every(validId) || new Set(b.dentistIds).size!==b.dentistIds.length ||
+      !Array.isArray(b.days) || !b.days.length || b.days.length>7 || b.days.some(day=>!Number.isInteger(day) || day<0 || day>6) || new Set(b.days).size!==b.days.length ||
+      !Array.isArray(b.shifts) || !b.shifts.length || b.shifts.length>6 || b.shifts.some(shift=>!shift || !time.test(shift.start) || !time.test(shift.end) || shift.start>=shift.end))
+      throw fail('Choose dentists, days, and up to six shifts with an end after the start.');
+    const shifts=[...b.shifts].sort((a,b)=>a.start.localeCompare(b.start));
+    if (shifts.some((shift,i)=>i>0 && shift.start<shifts[i-1].end)) throw fail('The shifts you entered overlap.');
+    let added=0,skipped=0;
+    for (const dentistId of b.dentistIds) {
+      const dentist=(await db.query('SELECT id,full_name FROM dentists WHERE id=$1 AND clinic_id=$2 AND is_active=TRUE',[dentistId,clinic.id])).rows[0];
+      if (!dentist) throw fail('Choose active dentists from your clinic.');
+      for (const day of b.days) for (const shift of shifts) {
+        const existing=(await db.query(`SELECT to_char(start_time,'HH24:MI') AS start,to_char(end_time,'HH24:MI') AS end FROM dentist_schedules
+          WHERE dentist_id=$1 AND day_of_week=$2 AND is_available=TRUE AND start_time<$4::time AND end_time>$3::time`,[dentistId,day,shift.start,shift.end])).rows;
+        if (existing.some(row=>row.start===shift.start && row.end===shift.end) && existing.length===1) { skipped++; continue; }
+        if (existing.length) throw fail(`${dentist.full_name} already has overlapping hours on ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day]}. No hours were added.`,409);
+        await db.query('INSERT INTO dentist_schedules (dentist_id,day_of_week,start_time,end_time) VALUES ($1,$2,$3,$4)',[dentistId,day,shift.start,shift.end]); added++;
+      }
+    }
+    return {added,skipped};
+  });
+  endpoint('put','/schedules/:id',async(db,clinic,req)=>{
+    const b=req.body || {},time=/^(?:[01]\d|2[0-3]):[0-5]\d$/;
+    if (!Number.isInteger(b.day) || b.day<0 || b.day>6 || !time.test(b.start) || !time.test(b.end) || b.start>=b.end) throw fail('Choose a day and an end time after the start.');
+    const schedule=(await db.query('SELECT ds.dentist_id FROM dentist_schedules ds JOIN dentists d ON d.id=ds.dentist_id WHERE ds.id=$1 AND d.clinic_id=$2 AND d.is_active=TRUE',[req.params.id,clinic.id])).rows[0];
+    if (!schedule) throw fail('Working hours for an active dentist were not found.',404);
+    const overlap=await db.query('SELECT id FROM dentist_schedules WHERE dentist_id=$1 AND id<>$2 AND day_of_week=$3 AND is_available=TRUE AND start_time<$5::time AND end_time>$4::time',[schedule.dentist_id,req.params.id,b.day,b.start,b.end]);
+    if (overlap.rows.length) throw fail('These hours overlap another shift. Your saved hours have not changed.',409);
+    await db.query('UPDATE dentist_schedules SET day_of_week=$1,start_time=$2,end_time=$3 WHERE id=$4',[b.day,b.start,b.end,req.params.id]);
     return {saved:true};
   });
   endpoint("delete", "/schedules/:id", async (db, clinic, req) => {
@@ -152,16 +189,17 @@ function createClinicToolsRouter(pool,{payments}={}) {
   endpoint("get", "/payments/:id/receipt",async(db,clinic,req)=>paymentReceipt(db,req.params.id,{clinicId:clinic.id}));
   endpoint("get", "/appointments", async (db, clinic, req) => {
     const status = req.query.status || "pending_review";
-    if (!["all","pending_review","accepted","declined","confirmed","completed","cancelled","rescheduled"].includes(status))
+    if (!["all","pending_review","accepted","declined","confirmed","completed","cancelled","rescheduled","reschedule_requests"].includes(status))
       throw fail("Choose a valid appointment status.");
     const result = await db.query(`SELECT a.id,a.appointment_code AS code,a.patient_name AS "patientName",a.patient_email AS email,
       a.patient_phone AS phone,a.appointment_date::text AS date,to_char(a.start_time,'HH24:MI') AS time,
       to_char(a.end_time,'HH24:MI') AS end,a.status,a.estimated_total_cost AS total,a.medical_notes AS notes,
-      a.review_notes AS "reviewNotes",d.full_name AS "dentistName",
+      a.review_notes AS "reviewNotes",d.full_name AS "dentistName",a.refund_review_required AS "refundReviewRequired",
+      EXISTS(SELECT 1 FROM appointment_changes ac WHERE ac.appointment_id=a.id AND ac.status='pending') AS "pendingChange",
       COALESCE((SELECT json_agg(COALESCE(aps.service_name,s.name) ORDER BY s.name)
         FROM appointment_services aps JOIN services s ON s.id=aps.service_id WHERE aps.appointment_id=a.id),'[]'::json) AS services
       FROM appointments a LEFT JOIN dentists d ON d.id=a.dentist_id
-      WHERE a.clinic_id=$1 AND ($2='all' OR a.status=$2) ORDER BY a.created_at DESC,a.id DESC LIMIT 100`, [clinic.id,status]);
+      WHERE a.clinic_id=$1 AND ($2='all' OR a.status=$2 OR ($2='reschedule_requests' AND EXISTS(SELECT 1 FROM appointment_changes ac WHERE ac.appointment_id=a.id AND ac.status='pending'))) ORDER BY a.created_at DESC,a.id DESC LIMIT 100`, [clinic.id,status]);
     const pending = await db.query("SELECT COUNT(*)::int AS count FROM appointments WHERE clinic_id=$1 AND status='pending_review'", [clinic.id]);
     return { appointments: result.rows, pendingAppointments: pending.rows[0].count };
   });
