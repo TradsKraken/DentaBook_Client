@@ -26,6 +26,8 @@ function restrictPortal(req, res, next) {
   const intake=patient && ((read && /^\/workspaces\/patient\/appointments\/[^/]+\/intake$/.test(path)) ||
     (req.method==='PUT' && /^\/workspaces\/patient\/appointments\/[^/]+\/intake$/.test(path)) ||
     (req.method==='POST' && /^\/workspaces\/patient\/appointments\/[^/]+\/followups\/[^/]+\/reply$/.test(path)));
+  const visits=(patient && ['GET','HEAD','POST'].includes(req.method) && /^\/workspaces\/patient\/appointments\/[^/]+\/feedback$/.test(path)) ||
+    (clinic && ((read && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/feedback$/.test(path)) || (req.method==='POST' && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/complete$/.test(path))));
   const clinicTools=clinic && (
     (['GET','HEAD','PUT'].includes(req.method) && path==='/workspaces/clinic/manage/intake-settings') ||
     (read && /^\/workspaces\/clinic\/manage\/appointments\/[^/]+\/intake$/.test(path)) ||
@@ -66,7 +68,9 @@ function restrictPortal(req, res, next) {
       (req.method === "DELETE" && /^\/workspaces\/clinic\/manage\/schedules\/[^/]+$/.test(path)))) ||
     (portal === "admin" && ((read && path === "/workspaces/admin/clinics") ||
       (req.method === "POST" && /^\/workspaces\/admin\/clinics\/[^/]+\/review$/.test(path))));
-  if (common || login || registration || workspace || patientPayment || clinicPayment || patientChanges || clinicChanges || accountTools || invitations || intake || clinicTools) return next();
+  const concerns=((patient && /^\/workspaces\/patient\/concerns(?:\/[a-f0-9-]+(?:\/messages)?)?$/i.test(path)) || (clinic && /^\/workspaces\/clinic\/concerns(?:\/[a-f0-9-]+(?:\/(messages|claim|manage))?)?$/i.test(path))) && ['GET','HEAD','POST'].includes(req.method);
+  const notifications=((patient && path.startsWith('/workspaces/patient/notifications')) || (clinic && path.startsWith('/workspaces/clinic/notifications'))) && (read || req.method==='POST');
+  if (notifications || concerns || visits || common || login || registration || workspace || patientPayment || clinicPayment || patientChanges || clinicChanges || accountTools || invitations || intake || clinicTools) return next();
   return res.status(404).set("Cache-Control", "no-store").json({ error: "API route not found in this portal." });
 }
 module.exports = { configuredPortal, portalAllowsRole, restrictPortal };
